@@ -21,7 +21,8 @@ import {
   Heart, 
   Share, 
   ChevronLeft, 
-  ChevronRight 
+  ChevronRight,
+  Building
 } from 'lucide-react';
 
 // Combine auction and buy now cars for the mock database
