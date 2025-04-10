@@ -1,39 +1,82 @@
 
 import React from 'react';
 import { Search, Clipboard, CarFront, CreditCard } from 'lucide-react';
-
-const steps = [
-  {
-    icon: <Search className="h-10 w-10 text-auction-accent" />,
-    title: 'Find Cars',
-    description: 'Browse our wide selection of verified used cars and filter to find your perfect match.'
-  },
-  {
-    icon: <Clipboard className="h-10 w-10 text-auction-accent" />,
-    title: 'Place Bids or Buy',
-    description: 'Place bids on auction vehicles or use the Buy Now option for immediate purchase.'
-  },
-  {
-    icon: <CreditCard className="h-10 w-10 text-auction-accent" />,
-    title: 'Secure Payment',
-    description: 'Complete your purchase through our secure payment system with buyer protection.'
-  },
-  {
-    icon: <CarFront className="h-10 w-10 text-auction-accent" />,
-    title: 'Collect Your Car',
-    description: 'Pick up your car from our collection points or choose our delivery service.'
-  }
-];
+import { useLanguage } from '../context/LanguageContext';
 
 const HowItWorks = () => {
+  const { language } = useLanguage();
+  
+  const translations = {
+    title: {
+      en: "How It Works",
+      ar: "كيف يعمل"
+    },
+    description: {
+      en: "Our simple process makes buying used cars easy, transparent, and secure. Get your dream car in just a few steps.",
+      ar: "عمليتنا البسيطة تجعل شراء السيارات المستعملة سهلاً وشفافًا وآمنًا. احصل على سيارة أحلامك في بضع خطوات فقط."
+    },
+    steps: [
+      {
+        title: { en: "Find Cars", ar: "ابحث عن السيارات" },
+        description: { 
+          en: "Browse our wide selection of verified used cars and filter to find your perfect match.",
+          ar: "تصفح مجموعتنا الواسعة من السيارات المستعملة المعتمدة وقم بالتصفية للعثور على ما يناسبك تمامًا."
+        }
+      },
+      {
+        title: { en: "Place Bids or Buy", ar: "ضع مزايدات أو اشتري" },
+        description: { 
+          en: "Place bids on auction vehicles or use the Buy Now option for immediate purchase.",
+          ar: "ضع مزايدات على سيارات المزاد أو استخدم خيار الشراء الفوري للشراء المباشر."
+        }
+      },
+      {
+        title: { en: "Secure Payment", ar: "دفع آمن" },
+        description: { 
+          en: "Complete your purchase through our secure payment system with buyer protection.",
+          ar: "أكمل عملية الشراء من خلال نظام الدفع الآمن لدينا مع حماية المشتري."
+        }
+      },
+      {
+        title: { en: "Collect Your Car", ar: "استلم سيارتك" },
+        description: { 
+          en: "Pick up your car from our collection points or choose our delivery service.",
+          ar: "استلم سيارتك من نقاط التجميع لدينا أو اختر خدمة التوصيل."
+        }
+      }
+    ]
+  };
+
+  const steps = [
+    {
+      icon: <Search className="h-10 w-10 text-auction-accent" />,
+      title: language === 'ar' ? translations.steps[0].title.ar : translations.steps[0].title.en,
+      description: language === 'ar' ? translations.steps[0].description.ar : translations.steps[0].description.en
+    },
+    {
+      icon: <Clipboard className="h-10 w-10 text-auction-accent" />,
+      title: language === 'ar' ? translations.steps[1].title.ar : translations.steps[1].title.en,
+      description: language === 'ar' ? translations.steps[1].description.ar : translations.steps[1].description.en
+    },
+    {
+      icon: <CreditCard className="h-10 w-10 text-auction-accent" />,
+      title: language === 'ar' ? translations.steps[2].title.ar : translations.steps[2].title.en,
+      description: language === 'ar' ? translations.steps[2].description.ar : translations.steps[2].description.en
+    },
+    {
+      icon: <CarFront className="h-10 w-10 text-auction-accent" />,
+      title: language === 'ar' ? translations.steps[3].title.ar : translations.steps[3].title.en,
+      description: language === 'ar' ? translations.steps[3].description.ar : translations.steps[3].description.en
+    }
+  ];
+
   return (
-    <section className="bg-auction-primary text-white py-16">
+    <section className={`bg-auction-primary text-white py-16 ${language === 'ar' ? 'rtl' : 'ltr'}`}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold">How It Works</h2>
+          <h2 className="text-3xl font-bold">{translations.title[language]}</h2>
           <p className="mt-4 text-gray-300 max-w-2xl mx-auto">
-            Our simple process makes buying used cars easy, transparent, and secure.
-            Get your dream car in just a few steps.
+            {translations.description[language]}
           </p>
         </div>
 

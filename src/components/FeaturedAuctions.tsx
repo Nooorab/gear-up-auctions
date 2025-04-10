@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import CarCard from './CarCard';
 import { ChevronRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 // Mock data for featured cars
 const featuredCars = [
@@ -57,14 +58,33 @@ const featuredCars = [
 ];
 
 const FeaturedAuctions = () => {
+  const { language } = useLanguage();
+
+  const translations = {
+    featuredAuctions: {
+      en: "Featured Auctions",
+      ar: "المزادات المميزة"
+    },
+    subtitle: {
+      en: "Bid on our handpicked selection of quality vehicles",
+      ar: "قم بالمزايدة على مجموعتنا المختارة من السيارات عالية الجودة"
+    },
+    viewAllAuctions: {
+      en: "View All Auctions",
+      ar: "عرض جميع المزادات"
+    }
+  };
+
   return (
-    <section className="bg-auction-light py-12">
+    <section className={`bg-auction-light py-12 ${language === 'ar' ? 'rtl' : 'ltr'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-auction-primary">Featured Auctions</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-auction-primary">
+              {translations.featuredAuctions[language]}
+            </h2>
             <p className="text-auction-muted mt-2">
-              Bid on our handpicked selection of quality vehicles
+              {translations.subtitle[language]}
             </p>
           </div>
           <Button 
@@ -73,8 +93,8 @@ const FeaturedAuctions = () => {
             asChild
           >
             <a href="/auctions">
-              View All Auctions
-              <ChevronRight className="ml-2 h-4 w-4" />
+              {translations.viewAllAuctions[language]}
+              <ChevronRight className={`${language === 'ar' ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4`} />
             </a>
           </Button>
         </div>
@@ -92,8 +112,8 @@ const FeaturedAuctions = () => {
             asChild
           >
             <a href="/auctions">
-              View All Auctions
-              <ChevronRight className="ml-2 h-4 w-4" />
+              {translations.viewAllAuctions[language]}
+              <ChevronRight className={`${language === 'ar' ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4`} />
             </a>
           </Button>
         </div>

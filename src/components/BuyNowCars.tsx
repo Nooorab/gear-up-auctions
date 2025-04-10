@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import CarCard from './CarCard';
 import { ChevronRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 // Mock data for buy now cars
 const buyNowCars = [
@@ -49,14 +50,33 @@ const buyNowCars = [
 ];
 
 const BuyNowCars = () => {
+  const { language } = useLanguage();
+
+  const translations = {
+    buyNowCars: {
+      en: "Buy Now Cars",
+      ar: "سيارات للشراء الفوري"
+    },
+    subtitle: {
+      en: "Ready for immediate purchase with no bidding required",
+      ar: "جاهزة للشراء الفوري بدون الحاجة للمزايدة"
+    },
+    viewAllCars: {
+      en: "View All Cars",
+      ar: "عرض جميع السيارات"
+    }
+  };
+
   return (
-    <section className="bg-white py-12">
+    <section className={`bg-white py-12 ${language === 'ar' ? 'rtl' : 'ltr'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-auction-primary">Buy Now Cars</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-auction-primary">
+              {translations.buyNowCars[language]}
+            </h2>
             <p className="text-auction-muted mt-2">
-              Ready for immediate purchase with no bidding required
+              {translations.subtitle[language]}
             </p>
           </div>
           <Button 
@@ -64,9 +84,9 @@ const BuyNowCars = () => {
             className="hidden md:flex items-center"
             asChild
           >
-            <a href="/buy">
-              View All Cars
-              <ChevronRight className="ml-2 h-4 w-4" />
+            <a href="/buy-now">
+              {translations.viewAllCars[language]}
+              <ChevronRight className={`${language === 'ar' ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4`} />
             </a>
           </Button>
         </div>
@@ -83,9 +103,9 @@ const BuyNowCars = () => {
             className="flex items-center mx-auto"
             asChild
           >
-            <a href="/buy">
-              View All Cars
-              <ChevronRight className="ml-2 h-4 w-4" />
+            <a href="/buy-now">
+              {translations.viewAllCars[language]}
+              <ChevronRight className={`${language === 'ar' ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4`} />
             </a>
           </Button>
         </div>
