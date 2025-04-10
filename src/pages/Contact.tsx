@@ -1,10 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { 
   Select, 
   SelectContent, 
@@ -13,8 +22,57 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from "sonner";
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const contactFormSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  phone: z.string().optional(),
+  subject: z.string().min(1, { message: "Please select a subject" }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
+});
 
 const Contact = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      subject: '',
+      message: '',
+    },
+  });
+
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    
+    try {
+      // In production, you would store this in Supabase or send via a Supabase Edge Function
+      // For now, we'll just simulate a successful submission
+      console.log('Contact form submission:', data);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Show success message
+      toast.success("Thank you! Your message has been sent successfully.");
+      
+      // Reset form
+      form.reset();
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toast.error("There was a problem sending your message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -92,66 +150,109 @@ const Contact = () => {
               <div className="bg-white p-8 rounded-lg shadow-sm">
                 <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
                 
-                <form className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="name">
-                        Full Name *
-                      </label>
-                      <Input type="text" id="name" placeholder="Enter your full name" required />
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your full name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email Address *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="your.email@example.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
                     
-                    <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="email">
-                        Email Address *
-                      </label>
-                      <Input type="email" id="email" placeholder="your.email@example.com" required />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="phone">
-                      Phone Number
-                    </label>
-                    <Input type="tel" id="phone" placeholder="e.g. +46 70 123 4567" />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="subject">
-                      Subject *
-                    </label>
-                    <Select>
-                      <SelectTrigger id="subject">
-                        <SelectValue placeholder="Select a subject" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="general">General Inquiry</SelectItem>
-                        <SelectItem value="support">Customer Support</SelectItem>
-                        <SelectItem value="buying">Buying a Car</SelectItem>
-                        <SelectItem value="selling">Selling a Car</SelectItem>
-                        <SelectItem value="inspection">Vehicle Inspection</SelectItem>
-                        <SelectItem value="feedback">Feedback</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="message">
-                      Message *
-                    </label>
-                    <Textarea 
-                      id="message" 
-                      placeholder="How can we help you?" 
-                      rows={5}
-                      required
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. +46 70 123 4567" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <Button type="submit" className="w-full">
-                    <Send className="mr-2 h-4 w-4" />
-                    Send Message
-                  </Button>
-                </form>
+                    
+                    <FormField
+                      control={form.control}
+                      name="subject"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Subject *</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a subject" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="general">General Inquiry</SelectItem>
+                              <SelectItem value="support">Customer Support</SelectItem>
+                              <SelectItem value="buying">Buying a Car</SelectItem>
+                              <SelectItem value="selling">Selling a Car</SelectItem>
+                              <SelectItem value="inspection">Vehicle Inspection</SelectItem>
+                              <SelectItem value="feedback">Feedback</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Message *</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="How can we help you?" 
+                              rows={5}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={isSubmitting}
+                    >
+                      <Send className="mr-2 h-4 w-4" />
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                    </Button>
+                  </form>
+                </Form>
               </div>
               
               {/* Map Section */}

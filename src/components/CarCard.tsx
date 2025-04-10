@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface CarCardProps {
-  id: number;
+  id: string | number; // Accept both string (UUID from database) and number (from mock data)
   title: string;
   imageUrl: string;
   price: number;
@@ -36,7 +36,7 @@ const CarCard = ({
         <img 
           src={imageUrl} 
           alt={title} 
-          className="car-image w-full h-48" 
+          className="car-image w-full h-48 object-cover" 
         />
         
         {/* Sale type badge */}
@@ -70,7 +70,7 @@ const CarCard = ({
           {isAuction && timeLeft && (
             <div>
               <p className="text-sm text-auction-muted">Time Left</p>
-              <div className="auction-timer">
+              <div className="flex items-center gap-1 text-auction-accent">
                 <Clock size={16} />
                 <span>{timeLeft}</span>
               </div>
@@ -79,15 +79,15 @@ const CarCard = ({
         </div>
         
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <div className="car-stat">
+          <div className="flex items-center gap-1.5 text-sm text-gray-600">
             <Car size={16} />
             <span>{year}</span>
           </div>
-          <div className="car-stat">
+          <div className="flex items-center gap-1.5 text-sm text-gray-600">
             <Gauge size={16} />
             <span>{mileage.toLocaleString()} km</span>
           </div>
-          <div className="car-stat col-span-2">
+          <div className="flex items-center gap-1.5 text-sm text-gray-600 col-span-2">
             <MapPin size={16} />
             <span>{location}</span>
           </div>

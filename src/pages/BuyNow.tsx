@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CarCard from '@/components/CarCard';
@@ -14,112 +14,90 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
-
-// Mock data for buy now cars
-const buyNowCars = [
-  {
-    id: 5,
-    title: 'Toyota Corolla 2019',
-    imageUrl: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 19500,
-    year: 2019,
-    mileage: 65000,
-    location: 'Stockholm',
-    isAuction: false,
-  },
-  {
-    id: 6,
-    title: 'Volkswagen Golf 2020',
-    imageUrl: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 24000,
-    year: 2020,
-    mileage: 50000,
-    location: 'Gothenburg',
-    isAuction: false,
-  },
-  {
-    id: 7,
-    title: 'Nissan Qashqai 2018',
-    imageUrl: 'https://images.unsplash.com/photo-1612911912304-161446194739?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 21000,
-    year: 2018,
-    mileage: 80000,
-    location: 'Malmö',
-    isAuction: false,
-  },
-  {
-    id: 8,
-    title: 'Kia Sportage 2020',
-    imageUrl: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 26500,
-    year: 2020,
-    mileage: 45000,
-    location: 'Linköping',
-    isAuction: false,
-  },
-  {
-    id: 13,
-    title: 'Honda CR-V 2019',
-    imageUrl: 'https://images.unsplash.com/photo-1606152421802-dbf926e76d32?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 23800,
-    year: 2019,
-    mileage: 58000,
-    location: 'Stockholm',
-    isAuction: false,
-  },
-  {
-    id: 14,
-    title: 'Mazda CX-5 2020',
-    imageUrl: 'https://images.unsplash.com/photo-1609058262232-58b3f9f2b3fb?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 27500,
-    year: 2020,
-    mileage: 42000,
-    location: 'Gothenburg',
-    isAuction: false,
-  },
-  {
-    id: 15,
-    title: 'Ford Focus 2018',
-    imageUrl: 'https://images.unsplash.com/photo-1510227089859-752cea7a8f5a?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 16500,
-    year: 2018,
-    mileage: 70000,
-    location: 'Uppsala',
-    isAuction: false,
-  },
-  {
-    id: 16,
-    title: 'Hyundai Tucson 2019',
-    imageUrl: 'https://images.unsplash.com/photo-1604478579643-d3b6f77c6054?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 22000,
-    year: 2019,
-    mileage: 62000,
-    location: 'Malmö',
-    isAuction: false,
-  },
-];
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from "sonner";
 
 const BuyNow = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredCars, setFilteredCars] = useState(buyNowCars);
+  const [filteredCars, setFilteredCars] = useState([]);
   const [sortOrder, setSortOrder] = useState('price-low');
+  const [isLoading, setIsLoading] = useState(true);
   
+  useEffect(() => {
+    const fetchBuyNowCars = async () => {
+      setIsLoading(true);
+      try {
+        const { data: listings, error: listingsError } = await supabase
+          .from('car_listings')
+          .select(`
+            *,
+            car:car_id(*)
+          `)
+          .eq('listing_type', 'fixed_price')
+          .eq('is_sold', false);
+        
+        if (listingsError) {
+          throw listingsError;
+        }
+        
+        const transformedListings = listings.map(listing => ({
+          id: listing.id,
+          title: `${listing.car.make} ${listing.car.model} ${listing.car.year}`,
+          imageUrl: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
+          price: listing.start_price,
+          year: listing.car.year,
+          mileage: listing.car.mileage,
+          location: 'Stockholm',
+          isAuction: false,
+        }));
+        
+        setFilteredCars(transformedListings);
+      } catch (error) {
+        console.error('Error fetching buy now listings:', error);
+        toast.error('Failed to load buy now listings');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchBuyNowCars();
+  }, []);
+
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    const filtered = buyNowCars.filter(car => 
+    const filtered = filteredCars.filter(car => 
       car.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      car.location.toLowerCase().includes(searchTerm.toLowerCase())
+      car.location?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredCars(filtered);
   };
 
-  const handleSortChange = (value: string) => {
+  const handleSortChange = (value) => {
     setSortOrder(value);
+    
+    let sortedCars = [...filteredCars];
+    
+    switch(value) {
+      case 'price-low':
+        sortedCars.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        sortedCars.sort((a, b) => b.price - a.price);
+        break;
+      case 'newest':
+        sortedCars.sort((a, b) => b.year - a.year);
+        break;
+      case 'oldest':
+        sortedCars.sort((a, b) => a.year - b.year);
+        break;
+    }
+    
+    setFilteredCars(sortedCars);
   };
 
   return (
@@ -127,7 +105,6 @@ const BuyNow = () => {
       <Navbar />
       
       <main className="flex-grow">
-        {/* Hero Section */}
         <div className="bg-auction-accent text-white py-12">
           <div className="container mx-auto px-4">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">Buy Now Cars</h1>
@@ -138,7 +115,6 @@ const BuyNow = () => {
           </div>
         </div>
         
-        {/* Search and Filter */}
         <div className="bg-white border-b py-4">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -166,7 +142,6 @@ const BuyNow = () => {
               </Button>
             </div>
             
-            {/* Filter Section */}
             {isFilterOpen && (
               <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4 border-t">
                 <div>
@@ -250,13 +225,18 @@ const BuyNow = () => {
           </div>
         </div>
         
-        {/* Car Listings */}
         <div className="bg-auction-light py-12">
           <div className="container mx-auto px-4">
             <div className="mb-6 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold">Available Cars</h2>
-                <p className="text-auction-muted mt-1">Showing {filteredCars.length} vehicles</p>
+                <p className="text-auction-muted mt-1">
+                  {isLoading ? (
+                    "Loading cars..."
+                  ) : (
+                    `Showing ${filteredCars.length} vehicles`
+                  )}
+                </p>
               </div>
               <div className="w-48">
                 <Select onValueChange={handleSortChange} defaultValue={sortOrder}>
@@ -273,22 +253,42 @@ const BuyNow = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredCars.map(car => (
-                <CarCard key={car.id} {...car} />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <p>Loading cars...</p>
+              </div>
+            ) : filteredCars.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredCars.map(car => (
+                  <CarCard key={car.id} {...car} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-lg text-auction-muted">No cars found.</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4"
+                  onClick={() => {
+                    setSearchTerm('');
+                  }}
+                >
+                  Reset Filters
+                </Button>
+              </div>
+            )}
             
-            {/* Pagination */}
-            <div className="mt-12 flex justify-center">
-              <nav className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" disabled>Previous</Button>
-                <Button variant="default" size="sm">1</Button>
-                <Button variant="outline" size="sm">2</Button>
-                <Button variant="outline" size="sm">3</Button>
-                <Button variant="outline" size="sm">Next</Button>
-              </nav>
-            </div>
+            {filteredCars.length > 0 && (
+              <div className="mt-12 flex justify-center">
+                <nav className="flex items-center space-x-2">
+                  <Button variant="outline" size="sm" disabled>Previous</Button>
+                  <Button variant="default" size="sm">1</Button>
+                  <Button variant="outline" size="sm">2</Button>
+                  <Button variant="outline" size="sm">3</Button>
+                  <Button variant="outline" size="sm">Next</Button>
+                </nav>
+              </div>
+            )}
           </div>
         </div>
       </main>

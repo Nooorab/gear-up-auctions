@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CarCard from '@/components/CarCard';
@@ -14,136 +14,136 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Search, ChevronDown, SlidersHorizontal } from 'lucide-react';
-
-// Mock data for auctions
-const auctionCars = [
-  {
-    id: 1,
-    title: 'Mercedes-Benz E-Class 2020',
-    imageUrl: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 45000,
-    currentBid: 38500,
-    year: 2020,
-    mileage: 45000,
-    location: 'Stockholm',
-    timeLeft: '2d 5h',
-    isAuction: true,
-  },
-  {
-    id: 2,
-    title: 'BMW 3 Series 2019',
-    imageUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 38000,
-    currentBid: 32000,
-    year: 2019,
-    mileage: 60000,
-    location: 'Gothenburg',
-    timeLeft: '1d 12h',
-    isAuction: true,
-  },
-  {
-    id: 3,
-    title: 'Audi Q5 2021',
-    imageUrl: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 52000,
-    currentBid: 48000,
-    year: 2021,
-    mileage: 30000,
-    location: 'Malmö',
-    timeLeft: '3d 8h',
-    isAuction: true,
-  },
-  {
-    id: 4,
-    title: 'Volvo XC60 2018',
-    imageUrl: 'https://images.unsplash.com/photo-1551737823-dfc8495904b4?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 35000,
-    currentBid: 29500,
-    year: 2018,
-    mileage: 75000,
-    location: 'Uppsala',
-    timeLeft: '6h 45m',
-    isAuction: true,
-  },
-  {
-    id: 9,
-    title: 'Volvo XC90 2020',
-    imageUrl: 'https://images.unsplash.com/photo-1538561018532-a55adc476aca?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 55000,
-    currentBid: 47000,
-    year: 2020,
-    mileage: 40000,
-    location: 'Stockholm',
-    timeLeft: '4d 2h',
-    isAuction: true,
-  },
-  {
-    id: 10,
-    title: 'Audi A6 2019',
-    imageUrl: 'https://images.unsplash.com/photo-1623775027824-fce2563513e5?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 42000,
-    currentBid: 36800,
-    year: 2019,
-    mileage: 55000,
-    location: 'Gothenburg',
-    timeLeft: '1d 18h',
-    isAuction: true,
-  },
-  {
-    id: 11,
-    title: 'BMW X5 2021',
-    imageUrl: 'https://images.unsplash.com/photo-1655919460455-5e34e55bb351?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 61000,
-    currentBid: 55500,
-    year: 2021,
-    mileage: 25000,
-    location: 'Malmö',
-    timeLeft: '5d 3h',
-    isAuction: true,
-  },
-  {
-    id: 12,
-    title: 'Mercedes-Benz GLC 2020',
-    imageUrl: 'https://images.unsplash.com/photo-1554823276-9d693eda1d11?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-    price: 49000,
-    currentBid: 43200,
-    year: 2020,
-    mileage: 38000,
-    location: 'Linköping',
-    timeLeft: '2d 9h',
-    isAuction: true,
-  },
-];
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from "sonner";
 
 const Auctions = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredCars, setFilteredCars] = useState(auctionCars);
+  const [filteredCars, setFilteredCars] = useState([]);
   const [sortOrder, setSortOrder] = useState('ending-soon');
+  const [isLoading, setIsLoading] = useState(true);
   
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      setIsLoading(true);
+      try {
+        const { data: listings, error: listingsError } = await supabase
+          .from('car_listings')
+          .select(`
+            *,
+            car:car_id(*)
+          `)
+          .eq('listing_type', 'auction')
+          .eq('is_sold', false);
+        
+        if (listingsError) {
+          throw listingsError;
+        }
+        
+        const transformedListings = listings.map(listing => ({
+          id: listing.id,
+          title: `${listing.car.make} ${listing.car.model} ${listing.car.year}`,
+          imageUrl: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
+          price: listing.reserve_price || listing.start_price,
+          currentBid: listing.current_bid || listing.start_price,
+          year: listing.car.year,
+          mileage: listing.car.mileage,
+          location: 'Stockholm',
+          timeLeft: calculateTimeLeft(listing.auction_end_time),
+          isAuction: true,
+        }));
+        
+        setFilteredCars(transformedListings);
+      } catch (error) {
+        console.error('Error fetching auctions:', error);
+        toast.error('Failed to load auction listings');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchAuctions();
+    
+    const interval = setInterval(() => {
+      setFilteredCars(cars => 
+        cars.map(car => ({
+          ...car,
+          timeLeft: car.timeLeft ? calculateTimeLeft(car.timeLeft) : '0h 0m'
+        }))
+      );
+    }, 60000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  const calculateTimeLeft = (endTime) => {
+    if (!endTime) return 'Unknown';
+    
+    const end = new Date(endTime);
+    const now = new Date();
+    const diffMs = end - now;
+    
+    if (diffMs <= 0) return 'Ended';
+    
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (days > 0) {
+      return `${days}d ${hours}h`;
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else {
+      return `${minutes}m`;
+    }
+  };
+
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    const filtered = auctionCars.filter(car => 
+    const filtered = filteredCars.filter(car => 
       car.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      car.location.toLowerCase().includes(searchTerm.toLowerCase())
+      car.location?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredCars(filtered);
   };
 
-  const handleSortChange = (value: string) => {
+  const handleSortChange = (value) => {
     setSortOrder(value);
+    
+    let sortedCars = [...filteredCars];
+    
+    switch(value) {
+      case 'ending-soon':
+        sortedCars.sort((a, b) => {
+          if (!a.timeLeft) return 1;
+          if (!b.timeLeft) return -1;
+          return a.timeLeft.localeCompare(b.timeLeft);
+        });
+        break;
+      case 'price-low':
+        sortedCars.sort((a, b) => (a.currentBid || 0) - (b.currentBid || 0));
+        break;
+      case 'price-high':
+        sortedCars.sort((a, b) => (b.currentBid || 0) - (a.currentBid || 0));
+        break;
+      case 'newest':
+        sortedCars.sort((a, b) => b.year - a.year);
+        break;
+    }
+    
+    setFilteredCars(sortedCars);
   };
-  
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       
       <main className="flex-grow">
-        {/* Hero Section */}
         <div className="bg-auction-primary text-white py-12">
           <div className="container mx-auto px-4">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">Live Auctions</h1>
@@ -153,7 +153,6 @@ const Auctions = () => {
           </div>
         </div>
         
-        {/* Search and Filter */}
         <div className="bg-white border-b py-4">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -181,7 +180,6 @@ const Auctions = () => {
               </Button>
             </div>
             
-            {/* Filter Section */}
             {isFilterOpen && (
               <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4 border-t">
                 <div>
@@ -262,13 +260,18 @@ const Auctions = () => {
           </div>
         </div>
         
-        {/* Auction Listings */}
         <div className="bg-auction-light py-12">
           <div className="container mx-auto px-4">
             <div className="mb-6 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold">Current Auctions</h2>
-                <p className="text-auction-muted mt-1">Showing {filteredCars.length} vehicles</p>
+                <p className="text-auction-muted mt-1">
+                  {isLoading ? (
+                    "Loading auctions..."
+                  ) : (
+                    `Showing ${filteredCars.length} vehicles`
+                  )}
+                </p>
               </div>
               <div className="w-48">
                 <Select onValueChange={handleSortChange} defaultValue={sortOrder}>
@@ -285,22 +288,42 @@ const Auctions = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredCars.map(car => (
-                <CarCard key={car.id} {...car} />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <p>Loading auctions...</p>
+              </div>
+            ) : filteredCars.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredCars.map(car => (
+                  <CarCard key={car.id} {...car} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-lg text-auction-muted">No auctions found.</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4"
+                  onClick={() => {
+                    setSearchTerm('');
+                  }}
+                >
+                  Reset Filters
+                </Button>
+              </div>
+            )}
             
-            {/* Pagination */}
-            <div className="mt-12 flex justify-center">
-              <nav className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" disabled>Previous</Button>
-                <Button variant="default" size="sm">1</Button>
-                <Button variant="outline" size="sm">2</Button>
-                <Button variant="outline" size="sm">3</Button>
-                <Button variant="outline" size="sm">Next</Button>
-              </nav>
-            </div>
+            {filteredCars.length > 0 && (
+              <div className="mt-12 flex justify-center">
+                <nav className="flex items-center space-x-2">
+                  <Button variant="outline" size="sm" disabled>Previous</Button>
+                  <Button variant="default" size="sm">1</Button>
+                  <Button variant="outline" size="sm">2</Button>
+                  <Button variant="outline" size="sm">3</Button>
+                  <Button variant="outline" size="sm">Next</Button>
+                </nav>
+              </div>
+            )}
           </div>
         </div>
       </main>
