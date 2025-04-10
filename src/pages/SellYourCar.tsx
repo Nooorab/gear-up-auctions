@@ -11,11 +11,41 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CheckCircle, ArrowRight, Upload, Info } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
+import { useLanguage } from '../context/LanguageContext';
+
+// Define the available make types for cars
+type CarMake = 'Audi' | 'BMW' | 'Ford' | 'Honda' | 'Mercedes' | 'Toyota' | 'Volkswagen' | 'Volvo';
+
+// Define the available condition types for cars
+type CarCondition = 'excellent' | 'very-good' | 'good' | 'fair' | 'poor';
+
+// Define the available listing types
+type ListingType = 'auction' | 'fixed-price';
+
+interface FormData {
+  make: CarMake | '';
+  model: string;
+  year: string;
+  mileage: string;
+  condition: CarCondition | '';
+  description: string;
+  saleType: 'auction' | 'fixed';
+  price: string;
+  name: string;
+  email: string;
+  phone: string;
+}
+
+interface ImageFile {
+  file: File;
+  preview: string;
+}
 
 const SellYourCar = () => {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     make: '',
     model: '',
     year: '',
@@ -29,25 +59,29 @@ const SellYourCar = () => {
     phone: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<ImageFile[]>([]);
+  const [termsAgreed, setTermsAgreed] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   
-  const handleChange = (e) => {
+  const isRTL = language === 'ar';
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleSaleTypeChange = (value) => {
+  const handleSaleTypeChange = (value: 'auction' | 'fixed') => {
     setFormData(prev => ({ ...prev, saleType: value }));
   };
   
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       
       // Preview images
-      const imageFiles = [];
+      const imageFiles: ImageFile[] = [];
       filesArray.forEach(file => {
-        if (file.type.match('image.*')) {
+        if (file.type.startsWith('image/')) {
           imageFiles.push({
             file,
             preview: URL.createObjectURL(file)
@@ -59,7 +93,7 @@ const SellYourCar = () => {
     }
   };
   
-  const removeImage = (indexToRemove) => {
+  const removeImage = (indexToRemove: number) => {
     setImages(prevImages => prevImages.filter((_, index) => index !== indexToRemove));
   };
   
@@ -67,24 +101,24 @@ const SellYourCar = () => {
     // Validate current step
     if (step === 1) {
       if (!formData.make || !formData.model || !formData.year || !formData.mileage || !formData.condition) {
-        toast.error("Please fill all required fields");
+        toast.error(t('requiredFields'));
         return;
       }
     } else if (step === 2) {
       if (formData.saleType === 'fixed' && !formData.price) {
-        toast.error("Please enter a price for your vehicle");
+        toast.error(t('enterPrice'));
         return;
       }
     } else if (step === 3) {
-      if (!formData.name || !formData.email || !formData.phone) {
-        toast.error("Please fill in all contact information");
+      if (!formData.name || !formData.email || !formData.phone || !termsAgreed) {
+        toast.error(t('requiredFields'));
         return;
       }
       
       // Simple email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
-        toast.error("Please enter a valid email address");
+        toast.error(t('validEmail'));
         return;
       }
     }
@@ -102,15 +136,15 @@ const SellYourCar = () => {
     setIsSubmitting(true);
     
     try {
-      // First create car entry
+      // First create car entry with proper type casting
       const { data: carData, error: carError } = await supabase
         .from('cars')
         .insert({
-          make: formData.make,
+          make: formData.make as CarMake,
           model: formData.model,
           year: parseInt(formData.year),
           mileage: parseInt(formData.mileage),
-          condition: formData.condition,
+          condition: formData.condition as CarCondition,
           description: formData.description
         })
         .select()
@@ -118,11 +152,11 @@ const SellYourCar = () => {
       
       if (carError) throw carError;
       
-      // Then create listing
+      // Then create listing with proper types
       const listingData = {
         car_id: carData.id,
-        listing_type: formData.saleType === 'auction' ? 'auction' : 'fixed-price',
-        start_price: formData.saleType === 'auction' ? 0 : parseInt(formData.price),
+        listing_type: formData.saleType === 'auction' ? 'auction' as ListingType : 'fixed-price' as ListingType,
+        start_price: formData.saleType === 'fixed' ? parseInt(formData.price) : 0,
         user_id: '00000000-0000-0000-0000-000000000000', // This would typically be the authenticated user's ID
         auction_end_time: formData.saleType === 'auction' ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null // 7 days from now
       };
@@ -133,10 +167,10 @@ const SellYourCar = () => {
       
       if (listingError) throw listingError;
       
-      // Handle file uploads if we implement storage
-      // This would be done after user authentication is set up
+      // Handle file uploads
+      // This would be implemented with Supabase storage after authentication is set up
       
-      toast.success("Your car has been successfully listed!");
+      toast.success(t('successMessage'));
       
       // Redirect after successful submission
       setTimeout(() => {
@@ -145,7 +179,7 @@ const SellYourCar = () => {
       
     } catch (error) {
       console.error('Error submitting car listing:', error);
-      toast.error('Failed to submit your listing. Please try again.');
+      toast.error(t('errorMessage'));
     } finally {
       setIsSubmitting(false);
     }
@@ -153,17 +187,16 @@ const SellYourCar = () => {
 
   // Render UI based on current step
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className={`min-h-screen flex flex-col bg-background ${isRTL ? 'rtl' : 'ltr'}`}>
       <Navbar />
       
       <main className="flex-grow">
         {/* Hero Section */}
         <div className="bg-auction-primary text-white py-12">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Sell Your Car With Us</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">{t('sellYourCarWith')}</h1>
             <p className="text-lg max-w-2xl mx-auto">
-              Get the best value for your vehicle through our trusted auction platform 
-              or sell it directly at a fixed price.
+              {t('getTheBestValue')}
             </p>
           </div>
         </div>
@@ -176,28 +209,28 @@ const SellYourCar = () => {
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-auction-primary text-white' : 'bg-gray-200'}`}>
                   1
                 </div>
-                <span className="text-sm mt-1">Vehicle Details</span>
+                <span className="text-sm mt-1">{t('vehicleDetails')}</span>
               </div>
               <div className={`h-1 flex-grow mx-2 ${step >= 2 ? 'bg-auction-primary' : 'bg-gray-200'}`}></div>
               <div className={`flex flex-col items-center ${step >= 2 ? 'text-auction-primary' : 'text-gray-400'}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-auction-primary text-white' : 'bg-gray-200'}`}>
                   2
                 </div>
-                <span className="text-sm mt-1">Listing Type</span>
+                <span className="text-sm mt-1">{t('listingType')}</span>
               </div>
               <div className={`h-1 flex-grow mx-2 ${step >= 3 ? 'bg-auction-primary' : 'bg-gray-200'}`}></div>
               <div className={`flex flex-col items-center ${step >= 3 ? 'text-auction-primary' : 'text-gray-400'}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 3 ? 'bg-auction-primary text-white' : 'bg-gray-200'}`}>
                   3
                 </div>
-                <span className="text-sm mt-1">Contact Info</span>
+                <span className="text-sm mt-1">{t('contactInfo')}</span>
               </div>
               <div className={`h-1 flex-grow mx-2 ${step >= 4 ? 'bg-auction-primary' : 'bg-gray-200'}`}></div>
               <div className={`flex flex-col items-center ${step >= 4 ? 'text-auction-primary' : 'text-gray-400'}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 4 ? 'bg-auction-primary text-white' : 'bg-gray-200'}`}>
                   4
                 </div>
-                <span className="text-sm mt-1">Review</span>
+                <span className="text-sm mt-1">{t('reviewListing')}</span>
               </div>
             </div>
           </div>
@@ -210,13 +243,13 @@ const SellYourCar = () => {
               {/* Step 1: Car Details */}
               {step === 1 && (
                 <div>
-                  <h2 className="text-2xl font-bold mb-6">Vehicle Details</h2>
+                  <h2 className="text-2xl font-bold mb-6">{t('vehicleDetails')}</h2>
                   
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="make">
-                          Make *
+                          {t('make')} *
                         </label>
                         <select 
                           name="make" 
@@ -226,7 +259,7 @@ const SellYourCar = () => {
                           required
                           className="w-full rounded-md border border-input bg-background px-3 py-2"
                         >
-                          <option value="">Select Make</option>
+                          <option value="">{isRTL ? 'اختر الشركة' : 'Select Make'}</option>
                           <option value="Audi">Audi</option>
                           <option value="BMW">BMW</option>
                           <option value="Ford">Ford</option>
@@ -240,13 +273,13 @@ const SellYourCar = () => {
                       
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="model">
-                          Model *
+                          {t('model')} *
                         </label>
                         <Input 
                           type="text" 
                           id="model" 
                           name="model" 
-                          placeholder="e.g. Corolla, 3 Series" 
+                          placeholder={isRTL ? 'مثال: كورولا، 3 سيريز' : 'e.g. Corolla, 3 Series'}
                           value={formData.model} 
                           onChange={handleChange} 
                           required 
@@ -255,13 +288,13 @@ const SellYourCar = () => {
                       
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="year">
-                          Year *
+                          {t('year')} *
                         </label>
                         <Input 
                           type="number" 
                           id="year" 
                           name="year" 
-                          placeholder="e.g. 2018" 
+                          placeholder={isRTL ? 'مثال: 2018' : 'e.g. 2018'}
                           min="1900" 
                           max={new Date().getFullYear()} 
                           value={formData.year} 
@@ -272,13 +305,13 @@ const SellYourCar = () => {
                       
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mileage">
-                          Mileage (km) *
+                          {t('mileage')} *
                         </label>
                         <Input 
                           type="number" 
                           id="mileage" 
                           name="mileage" 
-                          placeholder="e.g. 45000" 
+                          placeholder={isRTL ? 'مثال: 45000' : 'e.g. 45000'}
                           value={formData.mileage} 
                           onChange={handleChange} 
                           required 
@@ -288,7 +321,7 @@ const SellYourCar = () => {
                     
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="condition">
-                        Condition *
+                        {t('condition')} *
                       </label>
                       <select 
                         name="condition" 
@@ -298,23 +331,23 @@ const SellYourCar = () => {
                         required
                         className="w-full rounded-md border border-input bg-background px-3 py-2"
                       >
-                        <option value="">Select Condition</option>
-                        <option value="excellent">Excellent</option>
-                        <option value="very-good">Very Good</option>
-                        <option value="good">Good</option>
-                        <option value="fair">Fair</option>
-                        <option value="poor">Poor</option>
+                        <option value="">{isRTL ? 'اختر الحالة' : 'Select Condition'}</option>
+                        <option value="excellent">{t('excellent')}</option>
+                        <option value="very-good">{t('veryGood')}</option>
+                        <option value="good">{t('good')}</option>
+                        <option value="fair">{t('fair')}</option>
+                        <option value="poor">{t('poor')}</option>
                       </select>
                     </div>
                     
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="description">
-                        Description *
+                        {t('description')} *
                       </label>
                       <Textarea 
                         id="description" 
                         name="description" 
-                        placeholder="Provide details about your vehicle, including features, history, and any noteworthy information." 
+                        placeholder={isRTL ? 'قدم تفاصيل عن سيارتك، بما في ذلك الميزات والتاريخ وأي معلومات جديرة بالملاحظة.' : 'Provide details about your vehicle, including features, history, and any noteworthy information.'}
                         rows={5}
                         value={formData.description} 
                         onChange={handleChange} 
@@ -324,7 +357,7 @@ const SellYourCar = () => {
                     
                     <div>
                       <label className="block text-sm font-medium mb-4">
-                        Upload Photos *
+                        {t('uploadPhotos')} *
                       </label>
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                         <input
@@ -338,13 +371,13 @@ const SellYourCar = () => {
                         <label htmlFor="car-images" className="cursor-pointer">
                           <Upload className="mx-auto h-12 w-12 text-gray-400" />
                           <p className="mt-2 text-sm text-gray-600">
-                            Drag and drop photos here, or click to select files
+                            {t('dragAndDrop')}
                           </p>
                           <p className="mt-1 text-xs text-gray-500">
-                            Include exterior (front, back, sides), interior, and any damage photos
+                            {t('includeExterior')}
                           </p>
                           <Button type="button" variant="outline" className="mt-4">
-                            Select Files
+                            {t('selectFiles')}
                           </Button>
                         </label>
                       </div>
@@ -376,8 +409,8 @@ const SellYourCar = () => {
                   
                   <div className="mt-8 flex justify-end">
                     <Button type="button" onClick={nextStep} className="flex items-center">
-                      Next Step
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      {t('nextStep')}
+                      <ArrowRight className={`${isRTL ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4`} />
                     </Button>
                   </div>
                 </div>
@@ -386,7 +419,7 @@ const SellYourCar = () => {
               {/* Step 2: Listing Type */}
               {step === 2 && (
                 <div>
-                  <h2 className="text-2xl font-bold mb-6">Choose Listing Type</h2>
+                  <h2 className="text-2xl font-bold mb-6">{t('chooseListingType')}</h2>
                   
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -395,26 +428,26 @@ const SellYourCar = () => {
                         onClick={() => handleSaleTypeChange('auction')}
                       >
                         <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-semibold">Auction</h3>
+                          <h3 className="text-lg font-semibold">{t('auction')}</h3>
                           <RadioGroup value={formData.saleType} onValueChange={handleSaleTypeChange} className="mt-1">
                             <RadioGroupItem value="auction" id="auction" />
                           </RadioGroup>
                         </div>
                         <p className="mt-2 text-gray-600 text-sm">
-                          List your car in our auction platform where buyers can bid on your vehicle.
+                          {t('listYourCar')}
                         </p>
                         <ul className="mt-4 space-y-2">
                           <li className="flex items-start">
                             <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
-                            <span className="text-sm">Potential for higher final price</span>
+                            <span className="text-sm">{t('potentialForHigher')}</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
-                            <span className="text-sm">Wider pool of interested buyers</span>
+                            <span className="text-sm">{t('widerPool')}</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
-                            <span className="text-sm">Professional valuation included</span>
+                            <span className="text-sm">{t('professionalValuation')}</span>
                           </li>
                         </ul>
                       </div>
@@ -424,26 +457,26 @@ const SellYourCar = () => {
                         onClick={() => handleSaleTypeChange('fixed')}
                       >
                         <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-semibold">Fixed Price</h3>
+                          <h3 className="text-lg font-semibold">{t('fixedPrice')}</h3>
                           <RadioGroup value={formData.saleType} onValueChange={handleSaleTypeChange} className="mt-1">
                             <RadioGroupItem value="fixed" id="fixed" />
                           </RadioGroup>
                         </div>
                         <p className="mt-2 text-gray-600 text-sm">
-                          Set a fixed price for your vehicle for immediate purchase by interested buyers.
+                          {t('setAFixedPrice')}
                         </p>
                         <ul className="mt-4 space-y-2">
                           <li className="flex items-start">
                             <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
-                            <span className="text-sm">Faster selling process</span>
+                            <span className="text-sm">{t('fasterSelling')}</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
-                            <span className="text-sm">You set the exact price</span>
+                            <span className="text-sm">{t('youSetExactPrice')}</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
-                            <span className="text-sm">Greater price certainty</span>
+                            <span className="text-sm">{t('greaterPriceCertainty')}</span>
                           </li>
                         </ul>
                       </div>
@@ -452,30 +485,29 @@ const SellYourCar = () => {
                     {formData.saleType === 'fixed' && (
                       <div className="mt-6">
                         <label className="block text-sm font-medium mb-1" htmlFor="price">
-                          Set Your Price (SEK) *
+                          {t('setYourPrice')} *
                         </label>
                         <Input 
                           type="number" 
                           id="price" 
                           name="price" 
-                          placeholder="e.g. 250000" 
+                          placeholder={isRTL ? 'مثال: 250000' : 'e.g. 250000'}
                           value={formData.price} 
                           onChange={handleChange} 
                           required 
                         />
                         <p className="mt-2 text-sm text-gray-500 flex items-center">
                           <Info className="h-4 w-4 mr-1" />
-                          We'll help you verify if your price is competitive in the current market.
+                          {isRTL ? 'سنساعدك في التحقق مما إذا كان سعرك تنافسيًا في السوق الحالي.' : "We'll help you verify if your price is competitive in the current market."}
                         </p>
                       </div>
                     )}
                     
                     {formData.saleType === 'auction' && (
                       <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <h4 className="text-sm font-medium text-blue-800">Auction Information</h4>
+                        <h4 className="text-sm font-medium text-blue-800">{isRTL ? 'معلومات المزاد' : 'Auction Information'}</h4>
                         <p className="mt-1 text-sm text-blue-600">
-                          Our experts will evaluate your vehicle and suggest a starting bid price. 
-                          Auctions typically run for 7 days, and you'll have the option to set a reserve price.
+                          {t('auctionInfo')}
                         </p>
                       </div>
                     )}
@@ -483,11 +515,11 @@ const SellYourCar = () => {
                   
                   <div className="mt-8 flex justify-between">
                     <Button type="button" variant="outline" onClick={prevStep}>
-                      Back
+                      {t('back')}
                     </Button>
                     <Button type="button" onClick={nextStep} className="flex items-center">
-                      Next Step
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      {t('nextStep')}
+                      <ArrowRight className={`${isRTL ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4`} />
                     </Button>
                   </div>
                 </div>
@@ -496,18 +528,18 @@ const SellYourCar = () => {
               {/* Step 3: Contact Information */}
               {step === 3 && (
                 <div>
-                  <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
+                  <h2 className="text-2xl font-bold mb-6">{t('contactInformation')}</h2>
                   
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="name">
-                        Full Name *
+                        {t('fullName')} *
                       </label>
                       <Input 
                         type="text" 
                         id="name" 
                         name="name" 
-                        placeholder="Enter your full name" 
+                        placeholder={isRTL ? 'أدخل اسمك الكامل' : 'Enter your full name'} 
                         value={formData.name} 
                         onChange={handleChange} 
                         required 
@@ -516,13 +548,13 @@ const SellYourCar = () => {
                     
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="email">
-                        Email Address *
+                        {t('emailAddress')} *
                       </label>
                       <Input 
                         type="email" 
                         id="email" 
                         name="email" 
-                        placeholder="your.email@example.com" 
+                        placeholder={isRTL ? 'بريدك.الالكتروني@مثال.كوم' : 'your.email@example.com'}
                         value={formData.email} 
                         onChange={handleChange} 
                         required 
@@ -531,13 +563,13 @@ const SellYourCar = () => {
                     
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="phone">
-                        Phone Number *
+                        {t('phoneNumber')} *
                       </label>
                       <Input 
                         type="tel" 
                         id="phone" 
                         name="phone" 
-                        placeholder="e.g. +46 70 123 4567" 
+                        placeholder={isRTL ? 'مثال: +46 70 123 4567' : 'e.g. +46 70 123 4567'}
                         value={formData.phone} 
                         onChange={handleChange} 
                         required 
@@ -545,28 +577,48 @@ const SellYourCar = () => {
                     </div>
                     
                     <div className="flex items-start mt-4">
-                      <Checkbox id="terms" required className="mt-1" />
+                      <Checkbox 
+                        id="terms" 
+                        checked={termsAgreed}
+                        onCheckedChange={(checked) => setTermsAgreed(checked === true)}
+                        required 
+                        className="mt-1" 
+                      />
                       <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
-                        I agree to the <a href="/terms" className="text-auction-primary hover:underline">Terms and Conditions</a> and 
-                        acknowledge the <a href="/privacy" className="text-auction-primary hover:underline">Privacy Policy</a>
+                        {t('agreeToTerms').split(/( and )/).map((part, i) => 
+                          part === " and " ? 
+                            <span key={i}> {isRTL ? 'و' : 'and'} </span> : 
+                            part
+                        )}
+                        <a href="/terms" className="text-auction-primary hover:underline mx-1">
+                          {t('termsAndConditions')}
+                        </a>
+                        <a href="/privacy" className="text-auction-primary hover:underline mx-1">
+                          {t('privacyPolicy')}
+                        </a>
                       </label>
                     </div>
                     
                     <div className="flex items-start">
-                      <Checkbox id="marketing" className="mt-1" />
+                      <Checkbox 
+                        id="marketing" 
+                        checked={marketingOptIn}
+                        onCheckedChange={(checked) => setMarketingOptIn(checked === true)}
+                        className="mt-1" 
+                      />
                       <label htmlFor="marketing" className="ml-2 text-sm text-gray-600">
-                        I would like to receive updates, promotions, and marketing communications
+                        {t('receiveCommunications')}
                       </label>
                     </div>
                   </div>
                   
                   <div className="mt-8 flex justify-between">
                     <Button type="button" variant="outline" onClick={prevStep}>
-                      Back
+                      {t('back')}
                     </Button>
                     <Button type="button" onClick={nextStep} className="flex items-center">
-                      Review Listing
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      {t('reviewListing')}
+                      <ArrowRight className={`${isRTL ? 'mr-2 rotate-180' : 'ml-2'} h-4 w-4`} />
                     </Button>
                   </div>
                 </div>
@@ -577,47 +629,47 @@ const SellYourCar = () => {
                 <div>
                   <div className="text-center mb-8">
                     <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold">Almost Done!</h2>
+                    <h2 className="text-2xl font-bold">{t('almostDone')}</h2>
                     <p className="text-gray-600 mt-2">
-                      Please review your listing details before submitting
+                      {t('reviewDetails')}
                     </p>
                   </div>
                   
                   <div className="space-y-6">
                     <div className="border-b pb-4">
-                      <h3 className="font-medium text-gray-700 mb-2">Vehicle Information</h3>
+                      <h3 className="font-medium text-gray-700 mb-2">{t('vehicleInfo')}</h3>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-gray-500">Make</p>
+                          <p className="text-sm text-gray-500">{t('make')}</p>
                           <p className="font-medium">{formData.make}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500">Model</p>
+                          <p className="text-sm text-gray-500">{t('model')}</p>
                           <p className="font-medium">{formData.model}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500">Year</p>
+                          <p className="text-sm text-gray-500">{t('year')}</p>
                           <p className="font-medium">{formData.year}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500">Mileage</p>
+                          <p className="text-sm text-gray-500">{t('mileage')}</p>
                           <p className="font-medium">{formData.mileage} km</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500">Condition</p>
-                          <p className="font-medium capitalize">{formData.condition}</p>
+                          <p className="text-sm text-gray-500">{t('condition')}</p>
+                          <p className="font-medium capitalize">{t(formData.condition as string)}</p>
                         </div>
                       </div>
                     </div>
                     
                     <div className="border-b pb-4">
-                      <h3 className="font-medium text-gray-700 mb-2">Listing Details</h3>
+                      <h3 className="font-medium text-gray-700 mb-2">{t('listingDetails')}</h3>
                       <div>
-                        <p className="text-sm text-gray-500">Listing Type</p>
-                        <p className="font-medium capitalize">{formData.saleType === 'auction' ? 'Auction' : 'Fixed Price'}</p>
+                        <p className="text-sm text-gray-500">{t('listingType')}</p>
+                        <p className="font-medium capitalize">{formData.saleType === 'auction' ? t('auction') : t('fixedPrice')}</p>
                         {formData.saleType === 'fixed' && (
                           <div className="mt-2">
-                            <p className="text-sm text-gray-500">Price</p>
+                            <p className="text-sm text-gray-500">{t('price')}</p>
                             <p className="font-medium">{Number(formData.price).toLocaleString()} SEK</p>
                           </div>
                         )}
@@ -625,29 +677,29 @@ const SellYourCar = () => {
                     </div>
                     
                     <div className="border-b pb-4">
-                      <h3 className="font-medium text-gray-700 mb-2">Contact Information</h3>
+                      <h3 className="font-medium text-gray-700 mb-2">{t('contactInfo')}</h3>
                       <div>
-                        <p className="text-sm text-gray-500">Name</p>
+                        <p className="text-sm text-gray-500">{t('name')}</p>
                         <p className="font-medium">{formData.name}</p>
                       </div>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500">Email</p>
+                        <p className="text-sm text-gray-500">{t('email')}</p>
                         <p className="font-medium">{formData.email}</p>
                       </div>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500">Phone</p>
+                        <p className="text-sm text-gray-500">{t('phone')}</p>
                         <p className="font-medium">{formData.phone}</p>
                       </div>
                     </div>
                     
                     <div>
-                      <h3 className="font-medium text-gray-700 mb-2">Description</h3>
+                      <h3 className="font-medium text-gray-700 mb-2">{t('description')}</h3>
                       <p className="text-sm">{formData.description}</p>
                     </div>
                     
                     {images.length > 0 && (
                       <div>
-                        <h3 className="font-medium text-gray-700 mb-2">Images</h3>
+                        <h3 className="font-medium text-gray-700 mb-2">{t('images')}</h3>
                         <div className="grid grid-cols-4 gap-2">
                           {images.map((image, index) => (
                             <img 
@@ -664,7 +716,7 @@ const SellYourCar = () => {
                   
                   <div className="mt-8 flex justify-between">
                     <Button type="button" variant="outline" onClick={prevStep} disabled={isSubmitting}>
-                      Back
+                      {t('back')}
                     </Button>
                     <Button 
                       type="button" 
@@ -672,14 +724,13 @@ const SellYourCar = () => {
                       onClick={handleSubmit}
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? 'Submitting...' : 'Submit Listing'}
+                      {isSubmitting ? t('submitting') : t('submitListing')}
                     </Button>
                   </div>
                   
                   <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                     <p className="text-sm text-yellow-800">
-                      After submission, our team will review your listing and contact you to arrange 
-                      a vehicle inspection before it goes live on our platform.
+                      {t('afterSubmission')}
                     </p>
                   </div>
                 </div>

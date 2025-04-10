@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Clock, MapPin, Car, Gauge } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CarCardProps {
   id: string | number;
@@ -30,8 +31,10 @@ const CarCard = ({
   timeLeft,
   isAuction
 }: CarCardProps) => {
+  const { t, language } = useLanguage();
+  
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden transition-all hover:shadow-md">
+    <div className={`bg-white rounded-lg shadow overflow-hidden transition-all hover:shadow-md ${language === 'ar' ? 'rtl' : 'ltr'}`}>
       <div className="relative">
         <img 
           src={imageUrl} 
@@ -40,8 +43,8 @@ const CarCard = ({
         />
         
         {/* Sale type badge */}
-        <Badge className={`absolute top-2 right-2 ${isAuction ? 'bg-auction-accent' : 'bg-auction-primary'}`}>
-          {isAuction ? 'Auction' : 'Fixed Price'}
+        <Badge className={`absolute top-2 ${language === 'ar' ? 'left-2' : 'right-2'} ${isAuction ? 'bg-auction-accent' : 'bg-auction-primary'}`}>
+          {isAuction ? t('auction') : t('fixedPrice')}
         </Badge>
       </div>
       
@@ -52,14 +55,14 @@ const CarCard = ({
           <div>
             {isAuction ? (
               <>
-                <p className="text-sm text-auction-muted">Current Bid</p>
+                <p className="text-sm text-auction-muted">{t('currentBid')}</p>
                 <p className="text-xl font-bold text-auction-primary">
                   ${currentBid?.toLocaleString() || price.toLocaleString()}
                 </p>
               </>
             ) : (
               <>
-                <p className="text-sm text-auction-muted">Price</p>
+                <p className="text-sm text-auction-muted">{t('price')}</p>
                 <p className="text-xl font-bold text-auction-primary">
                   ${price.toLocaleString()}
                 </p>
@@ -69,7 +72,7 @@ const CarCard = ({
           
           {isAuction && timeLeft && (
             <div>
-              <p className="text-sm text-auction-muted">Time Left</p>
+              <p className="text-sm text-auction-muted">{t('timeLeft')}</p>
               <div className="flex items-center gap-1 text-auction-accent">
                 <Clock size={16} />
                 <span>{timeLeft}</span>
@@ -96,7 +99,7 @@ const CarCard = ({
         <div className="mt-4">
           <Link to={`/car/${id}`}>
             <Button className="w-full" variant={isAuction ? "outline" : "default"}>
-              {isAuction ? 'View Auction' : 'View Details'}
+              {isAuction ? t('viewAuction') : t('viewDetails')}
             </Button>
           </Link>
         </div>
