@@ -5,6 +5,16 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Auctions from "./pages/Auctions";
+import BuyNow from "./pages/BuyNow";
+import SellYourCar from "./pages/SellYourCar";
+import About from "./pages/About";
+import HowItWorks from "./pages/HowItWorks";
+import Contact from "./pages/Contact";
+import Faq from "./pages/Faq";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import CarDetail from "./pages/CarDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -17,17 +27,16 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* These routes will be implemented in future updates */}
-          <Route path="/auctions" element={<NotFound />} />
-          <Route path="/buy" element={<NotFound />} />
-          <Route path="/sell" element={<NotFound />} />
-          <Route path="/car/:id" element={<NotFound />} />
-          <Route path="/about" element={<NotFound />} />
-          <Route path="/how-it-works" element={<NotFound />} />
-          <Route path="/contact" element={<NotFound />} />
-          <Route path="/faq" element={<NotFound />} />
-          <Route path="/terms" element={<NotFound />} />
-          <Route path="/privacy" element={<NotFound />} />
+          <Route path="/auctions" element={<Auctions />} />
+          <Route path="/buy" element={<BuyNow />} />
+          <Route path="/sell" element={<SellYourCar />} />
+          <Route path="/car/:id" element={<CarDetail />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
