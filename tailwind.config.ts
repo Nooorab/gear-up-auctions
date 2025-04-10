@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,16 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom colors for our auction site
+				auction: {
+					primary: '#1A365D',    // Deep navy blue
+					secondary: '#F8F9FA',  // Light silver gray
+					accent: '#F97316',     // Orange accent color
+					muted: '#94A3B8',      // Muted blue-gray
+					light: '#F1F5F9',      // Very light background
+					dark: '#0F172A',       // Dark text/backgrounds
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
