@@ -4,14 +4,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '../context/LanguageContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   const { t, language } = useLanguage();
 
   const toggleMenu = () => {
