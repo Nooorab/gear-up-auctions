@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -34,7 +35,7 @@ const BuyNow = () => {
             *,
             car:car_id(*)
           `)
-          .eq('listing_type', 'fixed_price')
+          .eq('listing_type', 'fixed-price')
           .eq('is_sold', false);
         
         if (listingsError) {

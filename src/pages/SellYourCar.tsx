@@ -1,16 +1,19 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CheckCircle, ArrowRight, Upload, Info } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from "sonner";
 
 const SellYourCar = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     make: '',
@@ -25,17 +28,67 @@ const SellYourCar = () => {
     email: '',
     phone: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [images, setImages] = useState([]);
   
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleSaleTypeChange = (value: string) => {
+  const handleSaleTypeChange = (value) => {
     setFormData(prev => ({ ...prev, saleType: value }));
   };
   
+  const handleFileChange = (e) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      
+      // Preview images
+      const imageFiles = [];
+      filesArray.forEach(file => {
+        if (file.type.match('image.*')) {
+          imageFiles.push({
+            file,
+            preview: URL.createObjectURL(file)
+          });
+        }
+      });
+      
+      setImages(prevImages => [...prevImages, ...imageFiles]);
+    }
+  };
+  
+  const removeImage = (indexToRemove) => {
+    setImages(prevImages => prevImages.filter((_, index) => index !== indexToRemove));
+  };
+  
   const nextStep = () => {
+    // Validate current step
+    if (step === 1) {
+      if (!formData.make || !formData.model || !formData.year || !formData.mileage || !formData.condition) {
+        toast.error("Please fill all required fields");
+        return;
+      }
+    } else if (step === 2) {
+      if (formData.saleType === 'fixed' && !formData.price) {
+        toast.error("Please enter a price for your vehicle");
+        return;
+      }
+    } else if (step === 3) {
+      if (!formData.name || !formData.email || !formData.phone) {
+        toast.error("Please fill in all contact information");
+        return;
+      }
+      
+      // Simple email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        toast.error("Please enter a valid email address");
+        return;
+      }
+    }
+    
     setStep(prev => prev + 1);
     window.scrollTo(0, 0);
   };
@@ -44,7 +97,61 @@ const SellYourCar = () => {
     setStep(prev => prev - 1);
     window.scrollTo(0, 0);
   };
+  
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      // First create car entry
+      const { data: carData, error: carError } = await supabase
+        .from('cars')
+        .insert({
+          make: formData.make,
+          model: formData.model,
+          year: parseInt(formData.year),
+          mileage: parseInt(formData.mileage),
+          condition: formData.condition,
+          description: formData.description
+        })
+        .select()
+        .single();
+      
+      if (carError) throw carError;
+      
+      // Then create listing
+      const listingData = {
+        car_id: carData.id,
+        listing_type: formData.saleType === 'auction' ? 'auction' : 'fixed-price',
+        start_price: formData.saleType === 'auction' ? 0 : parseInt(formData.price),
+        user_id: '00000000-0000-0000-0000-000000000000', // This would typically be the authenticated user's ID
+        auction_end_time: formData.saleType === 'auction' ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null // 7 days from now
+      };
+      
+      const { error: listingError } = await supabase
+        .from('car_listings')
+        .insert(listingData);
+      
+      if (listingError) throw listingError;
+      
+      // Handle file uploads if we implement storage
+      // This would be done after user authentication is set up
+      
+      toast.success("Your car has been successfully listed!");
+      
+      // Redirect after successful submission
+      setTimeout(() => {
+        navigate('/auctions');
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error submitting car listing:', error);
+      toast.error('Failed to submit your listing. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
+  // Render UI based on current step
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -120,14 +227,14 @@ const SellYourCar = () => {
                           className="w-full rounded-md border border-input bg-background px-3 py-2"
                         >
                           <option value="">Select Make</option>
-                          <option value="audi">Audi</option>
-                          <option value="bmw">BMW</option>
-                          <option value="ford">Ford</option>
-                          <option value="honda">Honda</option>
-                          <option value="mercedes">Mercedes-Benz</option>
-                          <option value="toyota">Toyota</option>
-                          <option value="volkswagen">Volkswagen</option>
-                          <option value="volvo">Volvo</option>
+                          <option value="Audi">Audi</option>
+                          <option value="BMW">BMW</option>
+                          <option value="Ford">Ford</option>
+                          <option value="Honda">Honda</option>
+                          <option value="Mercedes">Mercedes-Benz</option>
+                          <option value="Toyota">Toyota</option>
+                          <option value="Volkswagen">Volkswagen</option>
+                          <option value="Volvo">Volvo</option>
                         </select>
                       </div>
                       
@@ -220,17 +327,50 @@ const SellYourCar = () => {
                         Upload Photos *
                       </label>
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                        <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                        <p className="mt-2 text-sm text-gray-600">
-                          Drag and drop photos here, or click to select files
-                        </p>
-                        <p className="mt-1 text-xs text-gray-500">
-                          Include exterior (front, back, sides), interior, and any damage photos
-                        </p>
-                        <Button type="button" variant="outline" className="mt-4">
-                          Select Files
-                        </Button>
+                        <input
+                          type="file"
+                          multiple
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="car-images"
+                          accept="image/*"
+                        />
+                        <label htmlFor="car-images" className="cursor-pointer">
+                          <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                          <p className="mt-2 text-sm text-gray-600">
+                            Drag and drop photos here, or click to select files
+                          </p>
+                          <p className="mt-1 text-xs text-gray-500">
+                            Include exterior (front, back, sides), interior, and any damage photos
+                          </p>
+                          <Button type="button" variant="outline" className="mt-4">
+                            Select Files
+                          </Button>
+                        </label>
                       </div>
+                      
+                      {images.length > 0 && (
+                        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                          {images.map((image, index) => (
+                            <div key={index} className="relative group">
+                              <img 
+                                src={image.preview} 
+                                alt={`Car preview ${index + 1}`} 
+                                className="h-24 w-full object-cover rounded"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -504,14 +644,35 @@ const SellYourCar = () => {
                       <h3 className="font-medium text-gray-700 mb-2">Description</h3>
                       <p className="text-sm">{formData.description}</p>
                     </div>
+                    
+                    {images.length > 0 && (
+                      <div>
+                        <h3 className="font-medium text-gray-700 mb-2">Images</h3>
+                        <div className="grid grid-cols-4 gap-2">
+                          {images.map((image, index) => (
+                            <img 
+                              key={index}
+                              src={image.preview} 
+                              alt={`Car preview ${index + 1}`} 
+                              className="h-20 w-full object-cover rounded"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="mt-8 flex justify-between">
-                    <Button type="button" variant="outline" onClick={prevStep}>
+                    <Button type="button" variant="outline" onClick={prevStep} disabled={isSubmitting}>
                       Back
                     </Button>
-                    <Button type="submit" className="bg-auction-accent hover:bg-auction-accent/90">
-                      Submit Listing
+                    <Button 
+                      type="button" 
+                      className="bg-auction-accent hover:bg-auction-accent/90" 
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Submitting...' : 'Submit Listing'}
                     </Button>
                   </div>
                   

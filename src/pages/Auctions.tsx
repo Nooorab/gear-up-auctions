@@ -3,7 +3,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CarCard from '@/components/CarCard';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { 
   Select, 
@@ -12,8 +11,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
-import { Search, ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
 
@@ -21,9 +19,9 @@ const Auctions = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCars, setFilteredCars] = useState([]);
-  const [sortOrder, setSortOrder] = useState('ending-soon');
+  const [sortOrder, setSortOrder] = useState('newest');
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const fetchAuctions = async () => {
       setIsLoading(true);
@@ -44,41 +42,30 @@ const Auctions = () => {
         const transformedListings = listings.map(listing => ({
           id: listing.id,
           title: `${listing.car.make} ${listing.car.model} ${listing.car.year}`,
-          imageUrl: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
-          price: listing.reserve_price || listing.start_price,
+          imageUrl: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
+          price: listing.start_price,
           currentBid: listing.current_bid || listing.start_price,
           year: listing.car.year,
           mileage: listing.car.mileage,
           location: 'Stockholm',
-          timeLeft: calculateTimeLeft(listing.auction_end_time),
+          timeLeft: getTimeLeft(listing.auction_end_time),
           isAuction: true,
         }));
         
         setFilteredCars(transformedListings);
       } catch (error) {
         console.error('Error fetching auctions:', error);
-        toast.error('Failed to load auction listings');
+        toast.error('Failed to load auctions');
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchAuctions();
-    
-    const interval = setInterval(() => {
-      setFilteredCars(cars => 
-        cars.map(car => ({
-          ...car,
-          timeLeft: car.timeLeft ? calculateTimeLeft(car.timeLeft) : '0h 0m'
-        }))
-      );
-    }, 60000);
-    
-    return () => clearInterval(interval);
   }, []);
   
-  const calculateTimeLeft = (endTime) => {
-    if (!endTime) return 'Unknown';
+  const getTimeLeft = (endTime) => {
+    if (!endTime) return '3d 12h';
     
     const end = new Date(endTime);
     const now = new Date();
@@ -86,17 +73,10 @@ const Auctions = () => {
     
     if (diffMs <= 0) return 'Ended';
     
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     
-    if (days > 0) {
-      return `${days}d ${hours}h`;
-    } else if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    } else {
-      return `${minutes}m`;
-    }
+    return `${diffDays}d ${diffHours}h`;
   };
 
   const toggleFilter = () => {
@@ -118,21 +98,24 @@ const Auctions = () => {
     let sortedCars = [...filteredCars];
     
     switch(value) {
-      case 'ending-soon':
-        sortedCars.sort((a, b) => {
-          if (!a.timeLeft) return 1;
-          if (!b.timeLeft) return -1;
-          return a.timeLeft.localeCompare(b.timeLeft);
-        });
-        break;
       case 'price-low':
-        sortedCars.sort((a, b) => (a.currentBid || 0) - (b.currentBid || 0));
+        sortedCars.sort((a, b) => a.currentBid - b.currentBid);
         break;
       case 'price-high':
-        sortedCars.sort((a, b) => (b.currentBid || 0) - (a.currentBid || 0));
+        sortedCars.sort((a, b) => b.currentBid - a.currentBid);
         break;
       case 'newest':
         sortedCars.sort((a, b) => b.year - a.year);
+        break;
+      case 'oldest':
+        sortedCars.sort((a, b) => a.year - b.year);
+        break;
+      case 'ending-soon':
+        sortedCars.sort((a, b) => {
+          if (a.timeLeft === 'Ended') return 1;
+          if (b.timeLeft === 'Ended') return -1;
+          return a.timeLeft.localeCompare(b.timeLeft);
+        });
         break;
     }
     
@@ -144,11 +127,12 @@ const Auctions = () => {
       <Navbar />
       
       <main className="flex-grow">
-        <div className="bg-auction-primary text-white py-12">
+        <div className="bg-auction-accent text-white py-12">
           <div className="container mx-auto px-4">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">Live Auctions</h1>
             <p className="text-lg max-w-2xl">
-              Browse our current live car auctions. Place your bids and get the chance to win your dream car at a great price.
+              Discover a wide selection of vehicles up for auction. 
+              Place your bid and secure your next car at a great price.
             </p>
           </div>
         </div>
@@ -189,10 +173,14 @@ const Auctions = () => {
                       <SelectValue placeholder="All Makes" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="audi">Audi</SelectItem>
-                      <SelectItem value="bmw">BMW</SelectItem>
-                      <SelectItem value="mercedes">Mercedes-Benz</SelectItem>
-                      <SelectItem value="volvo">Volvo</SelectItem>
+                      <SelectItem value="ford">Ford</SelectItem>
+                      <SelectItem value="honda">Honda</SelectItem>
+                      <SelectItem value="hyundai">Hyundai</SelectItem>
+                      <SelectItem value="kia">Kia</SelectItem>
+                      <SelectItem value="mazda">Mazda</SelectItem>
+                      <SelectItem value="nissan">Nissan</SelectItem>
+                      <SelectItem value="toyota">Toyota</SelectItem>
+                      <SelectItem value="volkswagen">Volkswagen</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -211,7 +199,6 @@ const Auctions = () => {
                         <SelectItem value="2018">2018</SelectItem>
                         <SelectItem value="2019">2019</SelectItem>
                         <SelectItem value="2020">2020</SelectItem>
-                        <SelectItem value="2021">2021</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select>
@@ -219,9 +206,9 @@ const Auctions = () => {
                         <SelectValue placeholder="To" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="2020">2020</SelectItem>
                         <SelectItem value="2021">2021</SelectItem>
                         <SelectItem value="2022">2022</SelectItem>
-                        <SelectItem value="2023">2023</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -230,10 +217,10 @@ const Auctions = () => {
                 <div>
                   <h3 className="font-medium mb-2">Price Range</h3>
                   <div className="px-2">
-                    <Slider defaultValue={[20000, 50000]} min={0} max={100000} step={1000} />
+                    <Slider defaultValue={[15000, 30000]} min={0} max={50000} step={1000} />
                     <div className="flex justify-between mt-2 text-sm text-gray-500">
                       <span>$0</span>
-                      <span>$100,000</span>
+                      <span>$50,000</span>
                     </div>
                   </div>
                 </div>
@@ -242,16 +229,16 @@ const Auctions = () => {
                   <h3 className="font-medium mb-2">Features</h3>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="leather" />
-                      <label htmlFor="leather" className="text-sm">Leather Seats</label>
+                      <Checkbox id="bluetooth" />
+                      <label htmlFor="bluetooth" className="text-sm">Bluetooth</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="navigation" />
-                      <label htmlFor="navigation" className="text-sm">Navigation System</label>
+                      <Checkbox id="camera" />
+                      <label htmlFor="camera" className="text-sm">Backup Camera</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="sunroof" />
-                      <label htmlFor="sunroof" className="text-sm">Sunroof</label>
+                      <Checkbox id="cruise" />
+                      <label htmlFor="cruise" className="text-sm">Cruise Control</label>
                     </div>
                   </div>
                 </div>
@@ -264,10 +251,10 @@ const Auctions = () => {
           <div className="container mx-auto px-4">
             <div className="mb-6 flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold">Current Auctions</h2>
+                <h2 className="text-2xl font-bold">Available Cars</h2>
                 <p className="text-auction-muted mt-1">
                   {isLoading ? (
-                    "Loading auctions..."
+                    "Loading cars..."
                   ) : (
                     `Showing ${filteredCars.length} vehicles`
                   )}
@@ -279,10 +266,11 @@ const Auctions = () => {
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ending-soon">Ending Soon</SelectItem>
-                    <SelectItem value="newest">Newest</SelectItem>
                     <SelectItem value="price-low">Price: Low to High</SelectItem>
                     <SelectItem value="price-high">Price: High to Low</SelectItem>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="oldest">Oldest First</SelectItem>
+                    <SelectItem value="ending-soon">Ending Soon</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -290,7 +278,7 @@ const Auctions = () => {
             
             {isLoading ? (
               <div className="flex justify-center items-center h-64">
-                <p>Loading auctions...</p>
+                <p>Loading cars...</p>
               </div>
             ) : filteredCars.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -300,7 +288,7 @@ const Auctions = () => {
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-lg text-auction-muted">No auctions found.</p>
+                <p className="text-lg text-auction-muted">No cars found.</p>
                 <Button 
                   variant="outline" 
                   className="mt-4"
