@@ -5,7 +5,13 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
 
 const Contact = () => {
@@ -114,14 +120,18 @@ const Contact = () => {
                     <label className="block text-sm font-medium mb-1" htmlFor="subject">
                       Subject *
                     </label>
-                    <Select id="subject" required>
-                      <option value="">Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="support">Customer Support</option>
-                      <option value="buying">Buying a Car</option>
-                      <option value="selling">Selling a Car</option>
-                      <option value="inspection">Vehicle Inspection</option>
-                      <option value="feedback">Feedback</option>
+                    <Select>
+                      <SelectTrigger id="subject">
+                        <SelectValue placeholder="Select a subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">General Inquiry</SelectItem>
+                        <SelectItem value="support">Customer Support</SelectItem>
+                        <SelectItem value="buying">Buying a Car</SelectItem>
+                        <SelectItem value="selling">Selling a Car</SelectItem>
+                        <SelectItem value="inspection">Vehicle Inspection</SelectItem>
+                        <SelectItem value="feedback">Feedback</SelectItem>
+                      </SelectContent>
                     </Select>
                   </div>
                   

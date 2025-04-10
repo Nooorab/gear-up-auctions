@@ -1,11 +1,16 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CarCard from '@/components/CarCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
@@ -98,6 +103,7 @@ const BuyNow = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCars, setFilteredCars] = useState(buyNowCars);
+  const [sortOrder, setSortOrder] = useState('price-low');
   
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
@@ -110,6 +116,10 @@ const BuyNow = () => {
       car.location.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredCars(filtered);
+  };
+
+  const handleSortChange = (value: string) => {
+    setSortOrder(value);
   };
 
   return (
@@ -162,15 +172,19 @@ const BuyNow = () => {
                 <div>
                   <h3 className="font-medium mb-2">Make</h3>
                   <Select>
-                    <option value="">All Makes</option>
-                    <option value="ford">Ford</option>
-                    <option value="honda">Honda</option>
-                    <option value="hyundai">Hyundai</option>
-                    <option value="kia">Kia</option>
-                    <option value="mazda">Mazda</option>
-                    <option value="nissan">Nissan</option>
-                    <option value="toyota">Toyota</option>
-                    <option value="volkswagen">Volkswagen</option>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Makes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ford">Ford</SelectItem>
+                      <SelectItem value="honda">Honda</SelectItem>
+                      <SelectItem value="hyundai">Hyundai</SelectItem>
+                      <SelectItem value="kia">Kia</SelectItem>
+                      <SelectItem value="mazda">Mazda</SelectItem>
+                      <SelectItem value="nissan">Nissan</SelectItem>
+                      <SelectItem value="toyota">Toyota</SelectItem>
+                      <SelectItem value="volkswagen">Volkswagen</SelectItem>
+                    </SelectContent>
                   </Select>
                 </div>
                 
@@ -178,19 +192,27 @@ const BuyNow = () => {
                   <h3 className="font-medium mb-2">Year</h3>
                   <div className="flex space-x-4">
                     <Select>
-                      <option value="">From</option>
-                      <option value="2015">2015</option>
-                      <option value="2016">2016</option>
-                      <option value="2017">2017</option>
-                      <option value="2018">2018</option>
-                      <option value="2019">2019</option>
-                      <option value="2020">2020</option>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="From" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="2015">2015</SelectItem>
+                        <SelectItem value="2016">2016</SelectItem>
+                        <SelectItem value="2017">2017</SelectItem>
+                        <SelectItem value="2018">2018</SelectItem>
+                        <SelectItem value="2019">2019</SelectItem>
+                        <SelectItem value="2020">2020</SelectItem>
+                      </SelectContent>
                     </Select>
                     <Select>
-                      <option value="">To</option>
-                      <option value="2020">2020</option>
-                      <option value="2021">2021</option>
-                      <option value="2022">2022</option>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="To" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="2020">2020</SelectItem>
+                        <SelectItem value="2021">2021</SelectItem>
+                        <SelectItem value="2022">2022</SelectItem>
+                      </SelectContent>
                     </Select>
                   </div>
                 </div>
@@ -236,12 +258,19 @@ const BuyNow = () => {
                 <h2 className="text-2xl font-bold">Available Cars</h2>
                 <p className="text-auction-muted mt-1">Showing {filteredCars.length} vehicles</p>
               </div>
-              <Select className="w-48">
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-              </Select>
+              <div className="w-48">
+                <Select onValueChange={handleSortChange} defaultValue={sortOrder}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="price-low">Price: Low to High</SelectItem>
+                    <SelectItem value="price-high">Price: High to Low</SelectItem>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="oldest">Oldest First</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

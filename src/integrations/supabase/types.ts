@@ -9,7 +9,127 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      bids: {
+        Row: {
+          bid_amount: number
+          created_at: string | null
+          id: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          bid_amount: number
+          created_at?: string | null
+          id?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          bid_amount?: number
+          created_at?: string | null
+          id?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      car_listings: {
+        Row: {
+          auction_end_time: string | null
+          car_id: string
+          created_at: string | null
+          current_bid: number | null
+          highest_bidder_id: string | null
+          id: string
+          is_sold: boolean | null
+          listing_type: Database["public"]["Enums"]["listing_type"]
+          reserve_price: number | null
+          start_price: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auction_end_time?: string | null
+          car_id: string
+          created_at?: string | null
+          current_bid?: number | null
+          highest_bidder_id?: string | null
+          id?: string
+          is_sold?: boolean | null
+          listing_type: Database["public"]["Enums"]["listing_type"]
+          reserve_price?: number | null
+          start_price: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auction_end_time?: string | null
+          car_id?: string
+          created_at?: string | null
+          current_bid?: number | null
+          highest_bidder_id?: string | null
+          id?: string
+          is_sold?: boolean | null
+          listing_type?: Database["public"]["Enums"]["listing_type"]
+          reserve_price?: number | null
+          start_price?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_listings_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cars: {
+        Row: {
+          condition: Database["public"]["Enums"]["car_condition"]
+          created_at: string | null
+          description: string | null
+          id: string
+          make: Database["public"]["Enums"]["car_make"]
+          mileage: number
+          model: string
+          updated_at: string | null
+          year: number
+        }
+        Insert: {
+          condition: Database["public"]["Enums"]["car_condition"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          make: Database["public"]["Enums"]["car_make"]
+          mileage: number
+          model: string
+          updated_at?: string | null
+          year: number
+        }
+        Update: {
+          condition?: Database["public"]["Enums"]["car_condition"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          make?: Database["public"]["Enums"]["car_make"]
+          mileage?: number
+          model?: string
+          updated_at?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +138,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      car_condition: "excellent" | "very-good" | "good" | "fair" | "poor"
+      car_make:
+        | "Audi"
+        | "BMW"
+        | "Ford"
+        | "Honda"
+        | "Mercedes"
+        | "Toyota"
+        | "Volkswagen"
+        | "Volvo"
+      listing_type: "auction" | "fixed-price"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +263,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      car_condition: ["excellent", "very-good", "good", "fair", "poor"],
+      car_make: [
+        "Audi",
+        "BMW",
+        "Ford",
+        "Honda",
+        "Mercedes",
+        "Toyota",
+        "Volkswagen",
+        "Volvo",
+      ],
+      listing_type: ["auction", "fixed-price"],
+    },
   },
 } as const
