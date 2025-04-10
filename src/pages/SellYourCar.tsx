@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Radio } from '@/components/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CheckCircle, ArrowRight, Upload, Info } from 'lucide-react';
 
 const SellYourCar = () => {
@@ -111,13 +111,13 @@ const SellYourCar = () => {
                         <label className="block text-sm font-medium mb-1" htmlFor="make">
                           Make *
                         </label>
-                        <Select 
+                        <select 
                           name="make" 
                           id="make" 
                           value={formData.make} 
                           onChange={handleChange} 
                           required
-                          className="w-full"
+                          className="w-full rounded-md border border-input bg-background px-3 py-2"
                         >
                           <option value="">Select Make</option>
                           <option value="audi">Audi</option>
@@ -128,7 +128,7 @@ const SellYourCar = () => {
                           <option value="toyota">Toyota</option>
                           <option value="volkswagen">Volkswagen</option>
                           <option value="volvo">Volvo</option>
-                        </Select>
+                        </select>
                       </div>
                       
                       <div>
@@ -183,13 +183,13 @@ const SellYourCar = () => {
                       <label className="block text-sm font-medium mb-1" htmlFor="condition">
                         Condition *
                       </label>
-                      <Select 
+                      <select 
                         name="condition" 
                         id="condition" 
                         value={formData.condition} 
                         onChange={handleChange} 
                         required
-                        className="w-full"
+                        className="w-full rounded-md border border-input bg-background px-3 py-2"
                       >
                         <option value="">Select Condition</option>
                         <option value="excellent">Excellent</option>
@@ -197,7 +197,7 @@ const SellYourCar = () => {
                         <option value="good">Good</option>
                         <option value="fair">Fair</option>
                         <option value="poor">Poor</option>
-                      </Select>
+                      </select>
                     </div>
                     
                     <div>
@@ -256,12 +256,9 @@ const SellYourCar = () => {
                       >
                         <div className="flex justify-between items-start">
                           <h3 className="text-lg font-semibold">Auction</h3>
-                          <Radio 
-                            checked={formData.saleType === 'auction'}
-                            onValueChange={() => handleSaleTypeChange('auction')}
-                            value="auction"
-                            className="mt-1" 
-                          />
+                          <RadioGroup value={formData.saleType} onValueChange={handleSaleTypeChange} className="mt-1">
+                            <RadioGroupItem value="auction" id="auction" />
+                          </RadioGroup>
                         </div>
                         <p className="mt-2 text-gray-600 text-sm">
                           List your car in our auction platform where buyers can bid on your vehicle.
@@ -288,12 +285,9 @@ const SellYourCar = () => {
                       >
                         <div className="flex justify-between items-start">
                           <h3 className="text-lg font-semibold">Fixed Price</h3>
-                          <Radio 
-                            checked={formData.saleType === 'fixed'} 
-                            onValueChange={() => handleSaleTypeChange('fixed')}
-                            value="fixed"
-                            className="mt-1" 
-                          />
+                          <RadioGroup value={formData.saleType} onValueChange={handleSaleTypeChange} className="mt-1">
+                            <RadioGroupItem value="fixed" id="fixed" />
+                          </RadioGroup>
                         </div>
                         <p className="mt-2 text-gray-600 text-sm">
                           Set a fixed price for your vehicle for immediate purchase by interested buyers.
