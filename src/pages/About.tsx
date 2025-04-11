@@ -4,10 +4,13 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ShieldCheck, Users, TrendingUp, Building, Award, Handshake } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const About = () => {
+  const { language, t } = useLanguage();
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className={`min-h-screen flex flex-col bg-background ${language === 'ar' ? 'rtl' : 'ltr'}`}>
       <Navbar />
       
       <main className="flex-grow">
@@ -19,13 +22,12 @@ const About = () => {
           ></div>
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
-              <h1 className="text-3xl md:text-5xl font-bold mb-6">About Abo Hasan Car</h1>
+              <h1 className="text-3xl md:text-5xl font-bold mb-6">{t('aboutTitle')}</h1>
               <p className="text-xl mb-8">
-                We're revolutionizing how people buy and sell used cars in Sweden, 
-                making the process transparent, reliable, and enjoyable.
+                {t('aboutDescription')}
               </p>
               <Button size="lg" className="bg-auction-accent hover:bg-auction-accent/90">
-                <a href="/contact">Get in Touch</a>
+                <a href="/contact">{t('getInTouch')}</a>
               </Button>
             </div>
           </div>
@@ -35,20 +37,15 @@ const About = () => {
         <div className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold mb-6 text-auction-primary">Our Story</h2>
+              <h2 className="text-3xl font-bold mb-6 text-auction-primary">{t('ourStoryTitle')}</h2>
               <p className="text-lg mb-6">
-                Abo Hasan Car was founded in 2020 by a team of automotive enthusiasts who saw an opportunity to transform the 
-                traditional used car market. Frustrated by the lack of transparency and trust in private sales and the high 
-                markups at dealerships, we set out to create a better alternative.
+                {t('ourStoryP1')}
               </p>
               <p className="text-lg mb-6">
-                What began as a small operation in Stockholm has quickly grown into one of Sweden's most trusted platforms for 
-                buying and selling used vehicles. By combining professional vehicle inspections with an easy-to-use auction platform, 
-                we've helped thousands of buyers find their perfect car and sellers get the best value for their vehicles.
+                {t('ourStoryP2')}
               </p>
               <p className="text-lg">
-                Today, Abo Hasan Car continues to innovate in the automotive marketplace, always with our core mission in mind: 
-                making car transactions transparent, fair, and enjoyable for everyone involved.
+                {t('ourStoryP3')}
               </p>
             </div>
           </div>
@@ -57,17 +54,16 @@ const About = () => {
         {/* Our Values */}
         <div className="py-16 bg-auction-light">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">Our Values</h2>
+            <h2 className="text-3xl font-bold mb-12 text-center">{t('ourValues')}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <div className="bg-auction-primary/10 rounded-full p-4 inline-flex mb-4">
                   <ShieldCheck className="h-8 w-8 text-auction-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Transparency</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('transparency')}</h3>
                 <p className="text-auction-muted">
-                  We believe in complete openness about the condition of every vehicle. Our detailed inspection reports 
-                  highlight both the strengths and any issues, so buyers know exactly what they're getting.
+                  {t('transparencyDesc')}
                 </p>
               </div>
               
@@ -75,10 +71,9 @@ const About = () => {
                 <div className="bg-auction-primary/10 rounded-full p-4 inline-flex mb-4">
                   <Users className="h-8 w-8 text-auction-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Customer-Centric</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('customerCentric')}</h3>
                 <p className="text-auction-muted">
-                  Our customers are at the heart of everything we do. We're committed to providing exceptional service 
-                  at every stage of the buying and selling process.
+                  {t('customerCentricDesc')}
                 </p>
               </div>
               
@@ -86,10 +81,9 @@ const About = () => {
                 <div className="bg-auction-primary/10 rounded-full p-4 inline-flex mb-4">
                   <TrendingUp className="h-8 w-8 text-auction-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Innovation</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('innovation')}</h3>
                 <p className="text-auction-muted">
-                  We're constantly looking for ways to improve our platform and processes, leveraging technology 
-                  to create a better experience for car buyers and sellers.
+                  {t('innovationDesc')}
                 </p>
               </div>
             </div>
@@ -99,7 +93,7 @@ const About = () => {
         {/* Team Section */}
         <div className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">Our Leadership Team</h2>
+            <h2 className="text-3xl font-bold mb-12 text-center">{t('ourLeadershipTeam')}</h2>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="text-center">
@@ -186,27 +180,27 @@ const About = () => {
         {/* Achievements */}
         <div className="py-16 bg-gradient-to-br from-auction-primary to-auction-dark text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-12">Our Achievements</h2>
+            <h2 className="text-3xl font-bold mb-12">{t('achievements')}</h2>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <div>
                 <div className="text-4xl font-bold mb-2">10,000+</div>
-                <p className="text-xl">Vehicles Sold</p>
+                <p className="text-xl">{t('vehiclesSold')}</p>
               </div>
               
               <div>
                 <div className="text-4xl font-bold mb-2">98%</div>
-                <p className="text-xl">Customer Satisfaction</p>
+                <p className="text-xl">{t('customerSatisfaction')}</p>
               </div>
               
               <div>
                 <div className="text-4xl font-bold mb-2">30+</div>
-                <p className="text-xl">Cities Covered</p>
+                <p className="text-xl">{t('citiesCovered')}</p>
               </div>
               
               <div>
                 <div className="text-4xl font-bold mb-2">15M+</div>
-                <p className="text-xl">SEK Transaction Value</p>
+                <p className="text-xl">{t('transactionValue')}</p>
               </div>
             </div>
           </div>
@@ -215,7 +209,7 @@ const About = () => {
         {/* Partners */}
         <div className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">Our Partners</h2>
+            <h2 className="text-3xl font-bold mb-12 text-center">{t('ourPartners')}</h2>
             
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center">
               <div className="flex justify-center">
@@ -240,8 +234,7 @@ const About = () => {
             
             <div className="max-w-2xl mx-auto mt-12 text-center">
               <p className="text-lg text-auction-muted">
-                We've partnered with trusted automotive institutions, financial services, and logistics companies 
-                to provide a comprehensive and reliable service to our customers.
+                {t('partnersDesc')}
               </p>
             </div>
           </div>
@@ -262,7 +255,7 @@ const About = () => {
                 </p>
                 <div>
                   <h3 className="font-semibold text-lg">Swedish Automotive Association</h3>
-                  <p className="text-auction-muted">Industry Recognition, 2023</p>
+                  <p className="text-auction-muted">{t('industryRecognition')}</p>
                 </div>
               </div>
             </div>
@@ -272,18 +265,17 @@ const About = () => {
         {/* CTA Section */}
         <div className="py-16 bg-auction-accent text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('joinCommunity')}</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
-              Whether you're looking to buy your dream car or sell your current vehicle, 
-              become part of our growing community of satisfied customers.
+              {t('joinCommunityDesc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-white text-auction-accent hover:bg-gray-100">
-                <Handshake className="mr-2 h-5 w-5" />
-                <a href="/contact">Contact Us</a>
+                <Handshake className={`${language === 'ar' ? 'ml-2' : 'mr-2'} h-5 w-5`} />
+                <a href="/contact">{t('contactUs')}</a>
               </Button>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                <a href="/careers">Join Our Team</a>
+                <a href="/careers">{t('joinTeam')}</a>
               </Button>
             </div>
           </div>

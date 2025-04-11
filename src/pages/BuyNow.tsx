@@ -17,8 +17,10 @@ import { Slider } from '@/components/ui/slider';
 import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
+import { useLanguage } from '../context/LanguageContext';
 
 const BuyNow = () => {
+  const { language, t } = useLanguage();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCars, setFilteredCars] = useState([]);
@@ -56,14 +58,14 @@ const BuyNow = () => {
         setFilteredCars(transformedListings);
       } catch (error) {
         console.error('Error fetching buy now listings:', error);
-        toast.error('Failed to load buy now listings');
+        toast.error(language === 'ar' ? 'فشل في تحميل قوائم الشراء الآن' : 'Failed to load buy now listings');
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchBuyNowCars();
-  }, []);
+  }, [language]);
 
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
@@ -102,16 +104,15 @@ const BuyNow = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className={`min-h-screen flex flex-col bg-background ${language === 'ar' ? 'rtl' : 'ltr'}`}>
       <Navbar />
       
       <main className="flex-grow">
         <div className="bg-auction-accent text-white py-12">
           <div className="container mx-auto px-4">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Buy Now Cars</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">{t('buyNowCarsTitle')}</h1>
             <p className="text-lg max-w-2xl">
-              Browse our selection of quality used cars available for immediate purchase. 
-              No bidding required - find your perfect car and drive it home today.
+              {t('buyNowDescription')}
             </p>
           </div>
         </div>
@@ -123,12 +124,12 @@ const BuyNow = () => {
                 <div className="relative">
                   <Input
                     type="text"
-                    placeholder="Search by make, model, or location..."
-                    className="pl-10 pr-4 py-2 w-full"
+                    placeholder={language === 'ar' ? "ابحث بحسب الماركة، الموديل، أو الموقع..." : "Search by make, model, or location..."}
+                    className={`${language === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2 w-full`}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                  <Search className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-2.5 h-5 w-5 text-gray-400`} />
                 </div>
               </form>
               
@@ -138,7 +139,7 @@ const BuyNow = () => {
                 className="flex items-center gap-2"
               >
                 <SlidersHorizontal size={16} />
-                Filters
+                {language === 'ar' ? "الفلاتر" : "Filters"}
                 <ChevronDown size={16} className={`transform transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
               </Button>
             </div>
@@ -146,10 +147,10 @@ const BuyNow = () => {
             {isFilterOpen && (
               <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4 border-t">
                 <div>
-                  <h3 className="font-medium mb-2">Make</h3>
+                  <h3 className="font-medium mb-2">{language === 'ar' ? "الماركة" : "Make"}</h3>
                   <Select>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Makes" />
+                      <SelectValue placeholder={language === 'ar' ? "جميع الماركات" : "All Makes"} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ford">Ford</SelectItem>
@@ -165,11 +166,11 @@ const BuyNow = () => {
                 </div>
                 
                 <div>
-                  <h3 className="font-medium mb-2">Year</h3>
+                  <h3 className="font-medium mb-2">{language === 'ar' ? "السنة" : "Year"}</h3>
                   <div className="flex space-x-4">
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="From" />
+                        <SelectValue placeholder={language === 'ar' ? "من" : "From"} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="2015">2015</SelectItem>
@@ -182,7 +183,7 @@ const BuyNow = () => {
                     </Select>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="To" />
+                        <SelectValue placeholder={language === 'ar' ? "إلى" : "To"} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="2020">2020</SelectItem>
@@ -194,7 +195,7 @@ const BuyNow = () => {
                 </div>
                 
                 <div>
-                  <h3 className="font-medium mb-2">Price Range</h3>
+                  <h3 className="font-medium mb-2">{language === 'ar' ? "نطاق السعر" : "Price Range"}</h3>
                   <div className="px-2">
                     <Slider defaultValue={[15000, 30000]} min={0} max={50000} step={1000} />
                     <div className="flex justify-between mt-2 text-sm text-gray-500">
@@ -205,19 +206,19 @@ const BuyNow = () => {
                 </div>
                 
                 <div>
-                  <h3 className="font-medium mb-2">Features</h3>
+                  <h3 className="font-medium mb-2">{language === 'ar' ? "المميزات" : "Features"}</h3>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Checkbox id="bluetooth" />
-                      <label htmlFor="bluetooth" className="text-sm">Bluetooth</label>
+                      <label htmlFor="bluetooth" className="text-sm">{language === 'ar' ? "بلوتوث" : "Bluetooth"}</label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox id="camera" />
-                      <label htmlFor="camera" className="text-sm">Backup Camera</label>
+                      <label htmlFor="camera" className="text-sm">{language === 'ar' ? "كاميرا خلفية" : "Backup Camera"}</label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox id="cruise" />
-                      <label htmlFor="cruise" className="text-sm">Cruise Control</label>
+                      <label htmlFor="cruise" className="text-sm">{language === 'ar' ? "مثبت سرعة" : "Cruise Control"}</label>
                     </div>
                   </div>
                 </div>
@@ -230,25 +231,25 @@ const BuyNow = () => {
           <div className="container mx-auto px-4">
             <div className="mb-6 flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold">Available Cars</h2>
+                <h2 className="text-2xl font-bold">{language === 'ar' ? "السيارات المتاحة" : "Available Cars"}</h2>
                 <p className="text-auction-muted mt-1">
                   {isLoading ? (
-                    "Loading cars..."
+                    language === 'ar' ? "جاري تحميل السيارات..." : "Loading cars..."
                   ) : (
-                    `Showing ${filteredCars.length} vehicles`
+                    language === 'ar' ? `عرض ${filteredCars.length} سيارة` : `Showing ${filteredCars.length} vehicles`
                   )}
                 </p>
               </div>
               <div className="w-48">
                 <Select onValueChange={handleSortChange} defaultValue={sortOrder}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sort by" />
+                    <SelectValue placeholder={language === 'ar' ? "ترتيب حسب" : "Sort by"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="price-low">Price: Low to High</SelectItem>
-                    <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    <SelectItem value="newest">Newest First</SelectItem>
-                    <SelectItem value="oldest">Oldest First</SelectItem>
+                    <SelectItem value="price-low">{language === 'ar' ? "السعر: من الأقل إلى الأعلى" : "Price: Low to High"}</SelectItem>
+                    <SelectItem value="price-high">{language === 'ar' ? "السعر: من الأعلى إلى الأقل" : "Price: High to Low"}</SelectItem>
+                    <SelectItem value="newest">{language === 'ar' ? "الأحدث أولاً" : "Newest First"}</SelectItem>
+                    <SelectItem value="oldest">{language === 'ar' ? "الأقدم أولاً" : "Oldest First"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -256,7 +257,7 @@ const BuyNow = () => {
             
             {isLoading ? (
               <div className="flex justify-center items-center h-64">
-                <p>Loading cars...</p>
+                <p>{language === 'ar' ? "جاري تحميل السيارات..." : "Loading cars..."}</p>
               </div>
             ) : filteredCars.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -266,7 +267,7 @@ const BuyNow = () => {
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-lg text-auction-muted">No cars found.</p>
+                <p className="text-lg text-auction-muted">{language === 'ar' ? "لم يتم العثور على سيارات." : "No cars found."}</p>
                 <Button 
                   variant="outline" 
                   className="mt-4"
@@ -274,7 +275,7 @@ const BuyNow = () => {
                     setSearchTerm('');
                   }}
                 >
-                  Reset Filters
+                  {language === 'ar' ? "إعادة ضبط الفلاتر" : "Reset Filters"}
                 </Button>
               </div>
             )}
@@ -282,11 +283,11 @@ const BuyNow = () => {
             {filteredCars.length > 0 && (
               <div className="mt-12 flex justify-center">
                 <nav className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" disabled>Previous</Button>
+                  <Button variant="outline" size="sm" disabled>{language === 'ar' ? "السابق" : "Previous"}</Button>
                   <Button variant="default" size="sm">1</Button>
                   <Button variant="outline" size="sm">2</Button>
                   <Button variant="outline" size="sm">3</Button>
-                  <Button variant="outline" size="sm">Next</Button>
+                  <Button variant="outline" size="sm">{language === 'ar' ? "التالي" : "Next"}</Button>
                 </nav>
               </div>
             )}

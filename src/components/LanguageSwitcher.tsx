@@ -39,11 +39,11 @@ const LanguageSwitcher = () => {
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setLanguage('en')}>
           🇺🇸 {translations.english[language]}
-          {language === 'en' && <span className={`${language === 'ar' ? 'mr-2' : 'ml-2'}`}>✓</span>}
+          {language === 'en' && <span className={language === 'ar' ? 'mr-2' : 'ml-2'}>✓</span>}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setLanguage('ar')}>
           🇸🇦 {translations.arabic[language]}
-          {language === 'ar' && <span className={`${language === 'ar' ? 'mr-2' : 'ml-2'}`}>✓</span>}
+          {language === 'ar' && <span className={language === 'ar' ? 'mr-2' : 'ml-2'}>✓</span>}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
