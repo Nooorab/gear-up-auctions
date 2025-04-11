@@ -107,6 +107,14 @@ const Faq = () => {
       answerEn: "You can reach our customer support team through the 'Contact Us' page, by email at support@abohasan.car, or by phone at +46 123 456 7890. Our support hours are Monday to Friday, 9am to 5pm CET.",
       answerAr: "يمكنك الوصول إلى فريق دعم العملاء لدينا من خلال صفحة 'اتصل بنا'، أو عبر البريد الإلكتروني على support@abohasan.car، أو عبر الهاتف على +46 123 456 7890. ساعات الدعم لدينا من الاثنين إلى الجمعة، من الساعة 9 صباحًا حتى 5 مساءً بتوقيت وسط أوروبا.",
       category: "General"
+    },
+    {
+      id: 11,
+      questionEn: "Do you sell food?",
+      questionAr: "هل تبيعون الطعام؟",
+      answerEn: "NO.",
+      answerAr: "لا.",
+      category: "General"
     }
   ];
 
