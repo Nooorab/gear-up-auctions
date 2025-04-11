@@ -154,9 +154,7 @@ export const translations = {
     browseAndResearchDesc: "Explore our extensive inventory of vehicles. Use filters to narrow down your search based on make, model, year, price range, and more. Each listing includes detailed information, high-quality photos, and a comprehensive vehicle inspection report.",
     bidOrBuy: "Bid or Buy",
     bidOrBuyDesc: "Choose between two purchase options:",
-    auction: "Auction",
     auctionDesc: "Place bids on vehicles in our auction section. Set your maximum bid and our system will automatically bid on your behalf.",
-    buyNow: "Buy Now",
     buyNowDesc: "Purchase immediately at a fixed price without waiting for an auction to end.",
     paymentAndDocumentation: "Payment and Documentation",
     paymentAndDocumentationDesc: "When you win an auction or purchase a car, you'll receive detailed instructions for completing the payment. We accept secure bank transfers and major credit cards. After payment confirmation, we'll handle all necessary paperwork and transfer documents.",
@@ -164,6 +162,17 @@ export const translations = {
     collectionOrDeliveryDesc: "You can either collect your vehicle from one of our secure facilities or arrange for delivery to your preferred location. Our team will coordinate with you to ensure a smooth handover process.",
     browseAuctions: "Browse Auctions",
     registerAsSeller: "Register as a Seller",
+    registerAsSellerDesc: "Create a seller account on our platform. You'll need to provide detailed information about yourself and verify your identity to ensure the security of all transactions.",
+    listVehicle: "List Your Vehicle",
+    listVehicleDesc: "Provide detailed information about your car, including make, model, year, mileage, condition, features, and service history. Upload high-quality photos showing the interior, exterior, and any notable features or flaws.",
+    vehicleInspection: "Vehicle Inspection",
+    vehicleInspectionDesc: "Schedule an inspection with our professional mechanics. They'll evaluate your car and create a detailed inspection report, which increases buyer trust and can lead to higher selling prices.",
+    chooseSelling: "Choose Selling Method",
+    chooseSellingDesc: "Decide between an auction or a fixed-price listing:",
+    auctionSellerDesc: "Set a reserve price (optional) and let buyers bid over a set period.",
+    fixedPriceSellerDesc: "Set a non-negotiable price for immediate purchase.",
+    saleCompletion: "Sale Completion",
+    saleCompletionDesc: "Once your car is sold, we'll handle the payment processing, documentation, and transfer procedures. You'll receive your payment securely, minus our commission fee.",
     
     // Contact Page
     contactUsHeading: "Contact Us",
@@ -189,18 +198,23 @@ export const translations = {
     sunday: "Sunday:",
     sundayClosed: "Closed",
     sendMessage: "Send Us a Message",
-    fullName: "Full Name",
     enterFullName: "Enter your full name",
-    emailAddress: "Email Address",
     yourEmail: "your.email@example.com",
-    phoneNumber: "Phone Number",
     phoneExample: "e.g. +46 70 123 4567",
     subject: "Subject",
     selectSubject: "Select a subject",
     message: "Message",
     howCanWeHelp: "How can we help you?",
     sendMessageBtn: "Send Message",
-    findUs: "Find Us"
+    findUs: "Find Us",
+    
+    // FAQ Page
+    faqTitle: "Frequently Asked Questions",
+    faqDescription: "Find answers to our most commonly asked questions. If you can't find what you're looking for, please contact our support team.",
+    generalQuestions: "General Questions",
+    buyingQuestions: "Buying Questions",
+    sellingQuestions: "Selling Questions",
+    paymentQuestions: "Payment & Delivery"
   },
   ar: {
     // Navbar
@@ -350,9 +364,7 @@ export const translations = {
     browseAndResearchDesc: "استكشف مجموعة واسعة من السيارات لدينا. استخدم الفلاتر لتضييق نطاق البحث استنادًا إلى الماركة والموديل والسنة ونطاق السعر والمزيد. تتضمن كل قائمة معلومات مفصلة وصورًا عالية الجودة وتقرير فحص شامل للسيارة.",
     bidOrBuy: "مزايدة أو شراء",
     bidOrBuyDesc: "اختر بين خيارين للشراء:",
-    auction: "المزاد",
     auctionDesc: "ضع مزايدات على السيارات في قسم المزاد. حدد الحد الأقصى لمزايدتك وسيقوم نظامنا بالمزايدة تلقائيًا نيابة عنك.",
-    buyNow: "الشراء الآن",
     buyNowDesc: "الشراء الفوري بسعر ثابت دون انتظار انتهاء المزاد.",
     paymentAndDocumentation: "الدفع والتوثيق",
     paymentAndDocumentationDesc: "عندما تفوز بمزاد أو تشتري سيارة، ستتلقى تعليمات مفصلة لإكمال الدفع. نقبل التحويلات المصرفية الآمنة وبطاقات الائتمان الرئيسية. بعد تأكيد الدفع، سنتعامل مع جميع الأوراق اللازمة ووثائق النقل.",
@@ -360,6 +372,17 @@ export const translations = {
     collectionOrDeliveryDesc: "يمكنك إما استلام سيارتك من إحدى منشآتنا الآمنة أو ترتيب توصيلها إلى الموقع الذي تفضله. سينسق فريقنا معك لضمان عملية تسليم سلسة.",
     browseAuctions: "تصفح المزادات",
     registerAsSeller: "التسجيل كبائع",
+    registerAsSellerDesc: "قم بإنشاء حساب بائع على منصتنا. ستحتاج إلى تقديم معلومات مفصلة عن نفسك والتحقق من هويتك لضمان أمن جميع المعاملات.",
+    listVehicle: "قائمة سيارتك",
+    listVehicleDesc: "قدم معلومات مفصلة عن سيارتك، بما في ذلك الماركة والموديل والسنة والمسافة المقطوعة والحالة والميزات وتاريخ الخدمة. قم بتحميل صور عالية الجودة تُظهر الداخل والخارج وأي ميزات أو عيوب ملحوظة.",
+    vehicleInspection: "فحص السيارة",
+    vehicleInspectionDesc: "جدول فحص مع ميكانيكيينا المحترفين. سيقومون بتقييم سيارتك وإنشاء تقرير فحص مفصل، مما يزيد من ثقة المشتري ويمكن أن يؤدي إلى أسعار بيع أعلى.",
+    chooseSelling: "اختر طريقة البيع",
+    chooseSellingDesc: "اختر بين المزاد أو القائمة ذات السعر الثابت:",
+    auctionSellerDesc: "حدد سعرًا احتياطيًا (اختياري) واترك المشترين يتزايدون على مدى فترة محددة.",
+    fixedPriceSellerDesc: "حدد سعرًا غير قابل للتفاوض للشراء الفوري.",
+    saleCompletion: "إتمام البيع",
+    saleCompletionDesc: "بمجرد بيع سيارتك، سنتعامل مع معالجة الدفع والتوثيق وإجراءات النقل. ستتلقى دفعتك بشكل آمن، ناقص رسوم العمولة.",
     
     // Contact Page
     contactUsHeading: "اتصل بنا",
@@ -385,18 +408,23 @@ export const translations = {
     sunday: "الأحد:",
     sundayClosed: "مغلق",
     sendMessage: "أرسل لنا رسالة",
-    fullName: "الاسم الكامل",
     enterFullName: "أدخل اسمك الكامل",
-    emailAddress: "عنوان البريد الإلكتروني",
     yourEmail: "بريدك@مثال.كوم",
-    phoneNumber: "رقم الهاتف",
     phoneExample: "مثال: +46 70 123 4567",
     subject: "الموضوع",
     selectSubject: "اختر موضوعًا",
     message: "الرسالة",
     howCanWeHelp: "كيف يمكننا مساعدتك؟",
     sendMessageBtn: "إرسال الرسالة",
-    findUs: "جدنا"
+    findUs: "جدنا",
+    
+    // FAQ Page
+    faqTitle: "الأسئلة الشائعة",
+    faqDescription: "اعثر على إجابات لأكثر أسئلتنا شيوعًا. إذا لم تجد ما تبحث عنه، يرجى الاتصال بفريق الدعم لدينا.",
+    generalQuestions: "أسئلة عامة",
+    buyingQuestions: "أسئلة الشراء",
+    sellingQuestions: "أسئلة البيع",
+    paymentQuestions: "الدفع والتسليم"
   }
 };
 

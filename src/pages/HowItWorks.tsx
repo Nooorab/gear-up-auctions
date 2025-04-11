@@ -190,10 +190,7 @@ const HowItWorks = () => {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">{t('registerAsSeller')}</h3>
-                    <p>
-                      Create a seller account on our platform. You'll need to provide detailed information about yourself 
-                      and verify your identity to ensure the security of all transactions.
-                    </p>
+                    <p>{t('registerAsSellerDesc')}</p>
                   </div>
                 </div>
                 
@@ -202,12 +199,8 @@ const HowItWorks = () => {
                     <Clipboard className="h-8 w-8 text-auction-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">List Your Vehicle</h3>
-                    <p>
-                      Provide detailed information about your car, including make, model, year, mileage, condition, 
-                      features, and service history. Upload high-quality photos showing the interior, exterior, and 
-                      any notable features or flaws.
-                    </p>
+                    <h3 className="text-xl font-semibold mb-2">{t('listVehicle')}</h3>
+                    <p>{t('listVehicleDesc')}</p>
                   </div>
                 </div>
                 
@@ -216,11 +209,8 @@ const HowItWorks = () => {
                     <CheckCircle className="h-8 w-8 text-auction-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Vehicle Inspection</h3>
-                    <p>
-                      Schedule an inspection with our professional mechanics. They'll evaluate your car and create 
-                      a detailed inspection report, which increases buyer trust and can lead to higher selling prices.
-                    </p>
+                    <h3 className="text-xl font-semibold mb-2">{t('vehicleInspection')}</h3>
+                    <p>{t('vehicleInspectionDesc')}</p>
                   </div>
                 </div>
                 
@@ -229,16 +219,14 @@ const HowItWorks = () => {
                     <ShieldCheck className="h-8 w-8 text-auction-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Choose Selling Method</h3>
-                    <p>
-                      Decide between an auction or a fixed-price listing:
-                    </p>
+                    <h3 className="text-xl font-semibold mb-2">{t('chooseSelling')}</h3>
+                    <p>{t('chooseSellingDesc')}</p>
                     <ul className="list-disc list-inside mt-2 space-y-1">
                       <li>
-                        <span className="font-medium">Auction:</span> Set a reserve price (optional) and let buyers bid over a set period.
+                        <span className="font-medium">{t('auction')}:</span> {t('auctionSellerDesc')}
                       </li>
                       <li>
-                        <span className="font-medium">Fixed Price:</span> Set a non-negotiable price for immediate purchase.
+                        <span className="font-medium">{t('fixedPrice')}:</span> {t('fixedPriceSellerDesc')}
                       </li>
                     </ul>
                   </div>
@@ -249,11 +237,8 @@ const HowItWorks = () => {
                     <Truck className="h-8 w-8 text-auction-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Sale Completion</h3>
-                    <p>
-                      Once your car is sold, we'll handle the payment processing, documentation, and transfer procedures. 
-                      You'll receive your payment securely, minus our commission fee.
-                    </p>
+                    <h3 className="text-xl font-semibold mb-2">{t('saleCompletion')}</h3>
+                    <p>{t('saleCompletionDesc')}</p>
                   </div>
                 </div>
               </div>
@@ -270,10 +255,9 @@ const HowItWorks = () => {
         {/* FAQ Section */}
         <div className="py-16 bg-auction-light">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold mb-6">{t('faqTitle')}</h2>
             <p className="text-lg mb-8 max-w-2xl mx-auto">
-              Find answers to common questions about how our platform works. For more detailed information, 
-              visit our comprehensive FAQ page.
+              {t('faqDescription')}
             </p>
             <Button asChild>
               <a href="/faq">{t('faq')}</a>
