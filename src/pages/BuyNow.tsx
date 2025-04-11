@@ -178,7 +178,7 @@ const BuyNow = () => {
                         <SelectItem value="2017">2017</SelectItem>
                         <SelectItem value="2018">2018</SelectItem>
                         <SelectItem value="2019">2019</SelectItem>
-                        <SelectItem value="2020">2020</SelectItem>
+                        <SelectItem value="2025">2025</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select>
@@ -186,7 +186,7 @@ const BuyNow = () => {
                         <SelectValue placeholder={language === 'ar' ? "إلى" : "To"} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="2020">2020</SelectItem>
+                        <SelectItem value="2025">2025</SelectItem>
                         <SelectItem value="2021">2021</SelectItem>
                         <SelectItem value="2022">2022</SelectItem>
                       </SelectContent>
