@@ -4,7 +4,7 @@ import { Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const Testimonials = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
 
   const translations = {
     title: {

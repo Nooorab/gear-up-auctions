@@ -50,7 +50,7 @@ const buyNowCars = [
 ];
 
 const BuyNowCars = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
 
   const translations = {
     buyNowCars: {

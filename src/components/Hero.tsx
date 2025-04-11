@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '../context/LanguageContext';
 
 const Hero = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
 
   const translations = {
     title: {

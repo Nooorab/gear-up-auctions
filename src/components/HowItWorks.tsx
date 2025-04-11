@@ -4,7 +4,7 @@ import { Search, Clipboard, CarFront, CreditCard } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const HowItWorks = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   
   const translations = {
     title: {

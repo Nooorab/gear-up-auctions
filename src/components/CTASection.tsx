@@ -5,7 +5,7 @@ import { CheckCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const CTASection = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
 
   const translations = {
     title: {

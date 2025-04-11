@@ -53,7 +53,7 @@ const NotFound = () => {
           <p className="text-auction-muted mb-8 max-w-lg mx-auto">
             {translations.description[language]}
           </p>
-          <div className={`space-${language === 'ar' ? 'x-reverse' : 'x'}-4 flex`}>
+          <div className="flex justify-center gap-4">
             <Button asChild>
               <Link to="/">{translations.backToHome[language]}</Link>
             </Button>
