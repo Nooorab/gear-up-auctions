@@ -60,7 +60,7 @@ const Auctions = () => {
             currentBid: listing.current_bid || listing.start_price,
             year: listing.car.year,
             mileage: listing.car.mileage,
-            location: 'Stockholm',
+            location: 'Damascus',
             timeLeft: timeLeft,
             isAuction: true,
           };

@@ -107,11 +107,11 @@ export const translations = {
     
     // About Page
     aboutTitle: "About Abo Hasan Car",
-    aboutDescription: "We're revolutionizing how people buy and sell used cars in Sweden, making the process transparent, reliable, and enjoyable.",
+    aboutDescription: "We're revolutionizing how people buy and sell used cars in Syria, making the process transparent, reliable, and enjoyable.",
     getInTouch: "Get in Touch",
     ourStoryTitle: "Our Story",
     ourStoryP1: "Abo Hasan Car was founded in 2020 by a team of automotive enthusiasts who saw an opportunity to transform the traditional used car market. Frustrated by the lack of transparency and trust in private sales and the high markups at dealerships, we set out to create a better alternative.",
-    ourStoryP2: "What began as a small operation in Stockholm has quickly grown into one of Sweden's most trusted platforms for buying and selling used vehicles. By combining professional vehicle inspections with an easy-to-use auction platform, we've helped thousands of buyers find their perfect car and sellers get the best value for their vehicles.",
+    ourStoryP2: "What began as a small operation in Damascus has quickly grown into one of Syria's most trusted platforms for buying and selling used vehicles. By combining professional vehicle inspections with an easy-to-use auction platform, we've helped thousands of buyers find their perfect car and sellers get the best value for their vehicles.",
     ourStoryP3: "Today, Abo Hasan Car continues to innovate in the automotive marketplace, always with our core mission in mind: making car transactions transparent, fair, and enjoyable for everyone involved.",
     ourValues: "Our Values",
     transparency: "Transparency",
@@ -179,7 +179,7 @@ export const translations = {
     contactUsDesc: "Have questions or need assistance? Our team is here to help. Get in touch with us through any of the channels below.",
     visitUs: "Visit Us",
     visitUsAddress1: "123 Auction Street",
-    visitUsAddress2: "Stockholm, Sweden 12345",
+    visitUsAddress2: "Damascus, Syria 12345",
     callUs: "Call Us",
     customerSupport: "Customer Support:",
     supportPhone: "+46 123 456 7890",

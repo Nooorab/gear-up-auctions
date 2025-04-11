@@ -265,13 +265,13 @@ const Contact = () => {
                     Interactive Map
                   </div>
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Abo Hasan Car - Stockholm Office</h3>
+                <h3 className="font-semibold text-lg mb-2">Abo Hasan Car - Damascus Office</h3>
                 <address className="not-italic text-auction-muted mb-4">
-                  <p>123 Auction Street, Stockholm</p>
-                  <p>Sweden 12345</p>
+                  <p>123 Auction Street, Damascus</p>
+                  <p>Syria 12345</p>
                 </address>
                 <p className="text-sm text-gray-600 mb-4">
-                  Our main office is located in central Stockholm, easily accessible by public transportation. 
+                  Our main office is located in central Damascus, easily accessible by public transportation. 
                   We're just a 5-minute walk from Central Station, with parking available nearby.
                 </p>
                 <Button variant="outline">
@@ -311,7 +311,7 @@ const Contact = () => {
                 <p>
                   {language === 'ar' 
                     ? "حاليًا، مكتبنا الرئيسي في ستوكهولم، لكن لدينا مراكز فحص المركبات ونقاط تجميع في غوتنبرغ، مالمو، وأوبسالا. نخطط للتوسع إلى المزيد من المدن قريبًا."
-                    : "Currently, our main office is in Stockholm, but we have vehicle inspection centers and collection points in Gothenburg, Malmö, and Uppsala. We're planning to expand to more cities soon."}
+                    : "Currently, our main office is in Damascus, but we have vehicle inspection centers and collection points in Gothenburg, Malmö, and Uppsala. We're planning to expand to more cities soon."}
                 </p>
               </div>
               

@@ -36,7 +36,7 @@ const allCars = [
     currentBid: 38500,
     year: 2020,
     mileage: 45000,
-    location: 'Stockholm',
+    location: 'Damascus',
     timeLeft: '2d 5h',
     isAuction: true,
     description: 'This Mercedes-Benz E-Class is in excellent condition with low mileage. Features include leather seats, navigation system, panoramic sunroof, and advanced safety features. The car has been well-maintained with full service history.',
@@ -100,7 +100,7 @@ const allCars = [
     price: 19500,
     year: 2019,
     mileage: 65000,
-    location: 'Stockholm',
+    location: 'Damascus',
     isAuction: false,
     description: 'Reliable Toyota Corolla with good fuel economy and lots of practical features. This car has been regularly serviced and maintained to ensure reliable performance. Great city car with easy handling and parking.',
     additionalImages: [

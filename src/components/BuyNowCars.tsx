@@ -14,7 +14,7 @@ const buyNowCars = [
     price: 19500,
     year: 2019,
     mileage: 65000,
-    location: 'Stockholm',
+    location: 'Damascus',
     isAuction: false,
   },
   {

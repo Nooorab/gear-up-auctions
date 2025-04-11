@@ -134,7 +134,7 @@ const Terms = () => {
           ar: "٩. حل الأحداث"
         },
         content: {
-          en: "11.1. Any dispute arising out of or relating to these terms or our Platform shall first be resolved through good faith negotiations.\n\n11.2. If negotiations fail, disputes shall be resolved through arbitration in Stockholm, Sweden, under the rules of the Swedish Arbitration Association.",
+          en: "11.1. Any dispute arising out of or relating to these terms or our Platform shall first be resolved through good faith negotiations.\n\n11.2. If negotiations fail, disputes shall be resolved through arbitration in Damascus, Syria, under the rules of the Swedish Arbitration Association.",
           ar: "٩.١. أي احتجاج ينشأ عن أو يتعلق بهذه الشروط أو منصةنا يجب أن يتم حله بالتعاون الجيد.\n\n٩.٢. إذا فشلت المفاوضات، يجب حل الأحداث من خلال الفصل بالتعاون في ستوكهولم، السويد، على أساس القواعد للاتحاد الدولي للتفاوض."
         }
       },
@@ -154,7 +154,7 @@ const Terms = () => {
           ar: "٩. معلومات الاتصال"
         },
         content: {
-          en: "For questions about these terms, please contact us at:\nAbo Hasan Car\n123 Auction Street\nStockholm, Sweden 12345\nEmail: legal@abohasan.car\nPhone: +46 123 456 7890",
+          en: "For questions about these terms, please contact us at:\nAbo Hasan Car\n123 Auction Street\nDamascus, Syria 12345\nEmail: legal@abohasan.car\nPhone: +46 123 456 7890",
           ar: "للأسئلة حول هذه الشروط، يرجى الاتصال بنا على:\nأبو حسن للسيارات\n١٢٣ شارع المزاد\nستوكهولم، السويد ١٢٣٤٥\nالبريد الإلكتروني: legal@abohasan.car\nالهاتف: +46 123 456 7890"
         }
       }

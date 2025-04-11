@@ -83,7 +83,7 @@ const Privacy = () => {
           ar: "١٢. اتصل بنا"
         },
         content: {
-          en: "If you have any questions, concerns, or requests regarding this Privacy Policy or our privacy practices, please contact us at:\n\nAbo Hasan Car\n123 Auction Street\nStockholm, Sweden 12345\nEmail: privacy@abohasan.car\nPhone: +46 123 456 7890",
+          en: "If you have any questions, concerns, or requests regarding this Privacy Policy or our privacy practices, please contact us at:\n\nAbo Hasan Car\n123 Auction Street\nDamascus, Syria 12345\nEmail: privacy@abohasan.car\nPhone: +46 123 456 7890",
           ar: "إذا كان لديك أي أسئلة أو مخاوف أو طلبات بخصوص سياسة الخصوصية هذه أو ممارسات الخصوصية لدينا، يرجى الاتصال بنا على:\n\nأبو حسن للسيارات\n١٢٣ شارع المزاد\nستوكهولم، السويد ١٢٣٤٥\nالبريد الإلكتروني: privacy@abohasan.car\nالهاتف: +46 123 456 7890"
         }
       }

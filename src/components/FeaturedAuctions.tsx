@@ -15,7 +15,7 @@ const featuredCars = [
     currentBid: 38500,
     year: 2020,
     mileage: 45000,
-    location: 'Stockholm',
+    location: 'Damascus',
     timeLeft: '2d 5h',
     isAuction: true,
   },
