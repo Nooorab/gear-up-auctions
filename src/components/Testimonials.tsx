@@ -4,7 +4,7 @@ import { Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const Testimonials = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const translations = {
     title: {
@@ -79,7 +79,7 @@ const Testimonials = () => {
                 <img 
                   src={testimonial.image} 
                   alt={language === 'ar' ? testimonial.nameAr : testimonial.name} 
-                  className="w-12 h-12 rounded-full mr-4"
+                  className={`w-12 h-12 rounded-full ${language === 'ar' ? 'ml-4' : 'mr-4'}`}
                 />
                 <div>
                   <h3 className="font-semibold">

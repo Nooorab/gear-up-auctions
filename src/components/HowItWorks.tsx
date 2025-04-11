@@ -4,7 +4,7 @@ import { Search, Clipboard, CarFront, CreditCard } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const HowItWorks = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   
   const translations = {
     title: {
@@ -50,23 +50,23 @@ const HowItWorks = () => {
   const steps = [
     {
       icon: <Search className="h-10 w-10 text-auction-accent" />,
-      title: language === 'ar' ? translations.steps[0].title.ar : translations.steps[0].title.en,
-      description: language === 'ar' ? translations.steps[0].description.ar : translations.steps[0].description.en
+      title: translations.steps[0].title[language],
+      description: translations.steps[0].description[language]
     },
     {
       icon: <Clipboard className="h-10 w-10 text-auction-accent" />,
-      title: language === 'ar' ? translations.steps[1].title.ar : translations.steps[1].title.en,
-      description: language === 'ar' ? translations.steps[1].description.ar : translations.steps[1].description.en
+      title: translations.steps[1].title[language],
+      description: translations.steps[1].description[language]
     },
     {
       icon: <CreditCard className="h-10 w-10 text-auction-accent" />,
-      title: language === 'ar' ? translations.steps[2].title.ar : translations.steps[2].title.en,
-      description: language === 'ar' ? translations.steps[2].description.ar : translations.steps[2].description.en
+      title: translations.steps[2].title[language],
+      description: translations.steps[2].description[language]
     },
     {
       icon: <CarFront className="h-10 w-10 text-auction-accent" />,
-      title: language === 'ar' ? translations.steps[3].title.ar : translations.steps[3].title.en,
-      description: language === 'ar' ? translations.steps[3].description.ar : translations.steps[3].description.en
+      title: translations.steps[3].title[language],
+      description: translations.steps[3].description[language]
     }
   ];
 

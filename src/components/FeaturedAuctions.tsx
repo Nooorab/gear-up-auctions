@@ -58,7 +58,7 @@ const featuredCars = [
 ];
 
 const FeaturedAuctions = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const translations = {
     featuredAuctions: {

@@ -11,7 +11,7 @@ import {
 import { Globe } from 'lucide-react';
 
 const LanguageSwitcher = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
 
   const translations = {
     language: {
@@ -36,7 +36,7 @@ const LanguageSwitcher = () => {
           <span>{translations.language[language]}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={language === 'ar' ? "start" : "end"}>
+      <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setLanguage('en')}>
           🇺🇸 {translations.english[language]}
           {language === 'en' && <span className={`${language === 'ar' ? 'mr-2' : 'ml-2'}`}>✓</span>}

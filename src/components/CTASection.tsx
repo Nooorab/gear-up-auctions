@@ -5,7 +5,7 @@ import { CheckCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const CTASection = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const translations = {
     title: {
@@ -91,7 +91,7 @@ const CTASection = () => {
               <ul className="space-y-3 text-left">
                 {translations.forBuyers.benefits.map((benefit, index) => (
                   <li key={index} className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-auction-accent mr-2 mt-0.5" />
+                    <CheckCircle className={`h-5 w-5 text-auction-accent ${language === 'ar' ? 'ml-2' : 'mr-2'} mt-0.5`} />
                     <span>{benefit[language]}</span>
                   </li>
                 ))}
@@ -103,7 +103,7 @@ const CTASection = () => {
               <ul className="space-y-3 text-left">
                 {translations.forSellers.benefits.map((benefit, index) => (
                   <li key={index} className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-auction-accent mr-2 mt-0.5" />
+                    <CheckCircle className={`h-5 w-5 text-auction-accent ${language === 'ar' ? 'ml-2' : 'mr-2'} mt-0.5`} />
                     <span>{benefit[language]}</span>
                   </li>
                 ))}
@@ -113,10 +113,10 @@ const CTASection = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-auction-accent hover:bg-auction-accent/90">
-              {translations.buttons.browseCars[language]}
+              <a href="/auctions">{translations.buttons.browseCars[language]}</a>
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-              {translations.buttons.sellYourCar[language]}
+              <a href="/sell">{translations.buttons.sellYourCar[language]}</a>
             </Button>
           </div>
         </div>
