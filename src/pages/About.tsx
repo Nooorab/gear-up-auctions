@@ -102,7 +102,7 @@ const About = () => {
                   alt="CEO" 
                   className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
                 />
-                <h3 className="text-xl font-semibold">Ahmad Hassan</h3>
+                <h3 className="text-xl font-semibold">Ahmad Hommmmammmmmm Hassan</h3>
                 <p className="text-auction-accent mb-2">Chief Executive Officer</p>
                 <p className="text-auction-muted px-4">
                   With over 15 years in the automotive industry, Ahmad brings valuable experience and a passion for innovation.
