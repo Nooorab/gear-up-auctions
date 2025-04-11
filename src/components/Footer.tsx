@@ -29,7 +29,7 @@ const Footer = () => {
     contact: {
       title: { en: "Contact Us", ar: "اتصل بنا" },
       address1: { en: "123 Auction Street", ar: "١٢٣ شارع المزاد" },
-      address2: { en: "Damascus, Syria 12345", ar: "ستوكهولم، السويد ١٢٣٤٥" },
+      address2: { en: "Damascus, Syria 12345", ar: "دمشق، سوريا ١٢٣٤٥" },
       email: { en: "Email: info@abohasan.car", ar: "البريد الإلكتروني: info@abohasan.car" },
       phone: { en: "Phone: +46 123 456 7890", ar: "الهاتف: +46 123 456 7890" }
     },

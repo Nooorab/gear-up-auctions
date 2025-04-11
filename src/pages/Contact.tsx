@@ -310,7 +310,7 @@ const Contact = () => {
                 <h3 className="text-lg font-semibold mb-2">{language === 'ar' ? "هل لديكم مكاتب في مدن أخرى؟" : "Do you have offices in other cities?"}</h3>
                 <p>
                   {language === 'ar' 
-                    ? "حاليًا، مكتبنا الرئيسي في ستوكهولم، لكن لدينا مراكز فحص المركبات ونقاط تجميع في غوتنبرغ، مالمو، وأوبسالا. نخطط للتوسع إلى المزيد من المدن قريبًا."
+                    ? "حاليًا، مكتبنا الرئيسي في دمشق، لكن لدينا مراكز فحص المركبات ونقاط تجميع في غوتنبرغ، مالمو، وأوبسالا. نخطط للتوسع إلى المزيد من المدن قريبًا."
                     : "Currently, our main office is in Damascus, but we have vehicle inspection centers and collection points in Gothenburg, Malmö, and Uppsala. We're planning to expand to more cities soon."}
                 </p>
               </div>
