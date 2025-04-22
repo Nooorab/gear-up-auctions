@@ -30,11 +30,11 @@ const allCars = [
   // Featured Auctions
   {
     id: 1,
-    title: 'Mercedes-Benz E-Class 2025',
+    title: 'Mercedes-Benz E-Class 2020',
     imageUrl: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=800&ixlib=rb-4.0.3',
     price: 45000,
     currentBid: 38500,
-    year: 2025,
+    year: 2020,
     mileage: 45000,
     location: 'Damascus',
     timeLeft: '2d 5h',
